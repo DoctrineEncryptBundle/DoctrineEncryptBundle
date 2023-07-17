@@ -20,7 +20,7 @@ This includes the most popular on as well:
 The original bundle created by ambta can be found here:
 -[ambta/DoctrineEncryptBundle](https://github.com/ambta/DoctrineEncryptBundle)
 
-This bundle has updated security by not rolling it's own encryption and using verified standardized library's from the field.
+This bundle has updated security by not rolling its own encryption and using verified standardized library's from the field.
 
 ### Using [Halite](https://github.com/paragonie/halite)
 
