@@ -17,7 +17,7 @@
 		"symfony/expression-language": "^5.4|^6.0|^7.0"
 	},
 	"require-dev": {
-		"paragonie/halite": "^5.0",
+		"paragonie/halite": "^4.6|^5.0",
 		"defuse/php-encryption": "^2.1",
 		"doctrine/cache": "^1.11",
 		"phpstan/phpstan": "^1.4",
