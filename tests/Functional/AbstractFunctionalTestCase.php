@@ -60,19 +60,32 @@ abstract class AbstractFunctionalTestCase extends TestCase
         }
 
         // Create a simple "default" Doctrine ORM configuration
-        $isDevMode                 = true;
-        $proxyDir                  = null;
-        $cache                     = null;
-        $reportFieldsWhereDeclared = true;
+        $isDevMode = true;
+        $proxyDir = null;
+        $cache = null;
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(
-            array(__DIR__.'/fixtures/Entity'),
-            $isDevMode,
-            $proxyDir,
-            $cache,
-            $reportFieldsWhereDeclared
-        );
-        $config->setLazyGhostObjectEnabled (true);
+        if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+            $useSimpleAnnotationReader = false;
+            $config = ORMSetup::createAnnotationMetadataConfiguration(
+                array(__DIR__.'/fixtures/Entity'),
+                $isDevMode,
+                $proxyDir,
+                $cache,
+                $useSimpleAnnotationReader
+            );
+        }
+        else
+        {
+            $reportFieldsWhereDeclared = true;
+            $config = ORMSetup::createAttributeMetadataConfiguration(
+                array(__DIR__.'/fixtures/Entity'),
+                $isDevMode,
+                $proxyDir,
+                $cache,
+                $reportFieldsWhereDeclared
+            );
+            $config->setLazyGhostObjectEnabled (true);
+        }
         $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
 
         // database configuration parameters
