@@ -12,12 +12,12 @@ class EncryptedDateTime extends StringType
 
     const TYPE = 'encrypted_datetime';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         return $this->service->decrypt ('datetime', $value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         return $this->service->encrypt ('datetime', $value);
     }

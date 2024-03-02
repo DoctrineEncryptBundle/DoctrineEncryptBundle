@@ -12,12 +12,12 @@ class EncryptedJSON extends TextType
 
     const TYPE = 'encrypted_json';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         return $this->service->decrypt ('json', $value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         return $this->service->encrypt ('json', $value);
     }

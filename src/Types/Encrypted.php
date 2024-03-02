@@ -12,12 +12,12 @@ class Encrypted extends StringType
 
     const TYPE = 'encrypted';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         return $this->service->decrypt ('string', $value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         return $this->service->encrypt ('string', $value);
     }
