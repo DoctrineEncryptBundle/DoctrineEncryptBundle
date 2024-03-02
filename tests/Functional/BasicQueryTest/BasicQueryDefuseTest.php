@@ -1,9 +1,9 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
+namespace DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
 
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
+use DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
+use DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 
 class BasicQueryDefuseTest extends AbstractBasicQueryTestCase
 {

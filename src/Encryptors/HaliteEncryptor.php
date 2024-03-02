@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Encryptors;
+namespace DoctrineEncryptBundle\Encryptors;
 
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
@@ -9,15 +9,18 @@ use ParagonIE\Halite\Symmetric\Crypto;
 
 /**
  * Class for encrypting and decrypting with the halite library
- *
- * @author Michael de Groot <specamps@gmail.com>
  */
 
 class HaliteEncryptor implements EncryptorInterface
 {
-    /** @var EncryptionKey|null  */
+    /** 
+     * @var EncryptionKey|null  
+     */
     private $encryptionKey = null;
-    /** @var string */
+
+    /** 
+     * @var string 
+     */
     private $secret;
 
     /**

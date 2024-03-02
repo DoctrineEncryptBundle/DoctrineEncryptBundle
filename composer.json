@@ -6,8 +6,7 @@
 	"description": "Encrypted symfony entity's by verified and standardized libraries",
 	"require": {
 		"php": "^7.2|^8.0",
-		"paragonie/halite": "^4.6|^5.0",
-		"doctrine/orm": "^2.5",
+		"doctrine/orm": "^2.5|^3.0",
 		"doctrine/doctrine-bundle": "^2.0.8|^2.1",
 		"symfony/property-access": "^5.4|^6.0|^7.0",
 		"symfony/dependency-injection": "^5.4|^6.0|^7.0",
@@ -18,10 +17,10 @@
 		"symfony/expression-language": "^5.4|^6.0|^7.0"
 	},
 	"require-dev": {
+		"paragonie/halite": "^5.0",
 		"defuse/php-encryption": "^2.1",
 		"doctrine/cache": "^1.11",
 		"phpstan/phpstan": "^1.4",
-		"jetbrains/phpstorm-attributes": "^1.0",
 		"phpcompatibility/php-compatibility": "^9.3",
 		"symfony/phpunit-bridge": "^7.0"
 	},
@@ -32,7 +31,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Ambta\\DoctrineEncryptBundle\\": "src/"
+			"DoctrineEncryptBundle\\": "src/"
 		}
 	},
 	"scripts": {
@@ -42,7 +41,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/"
+			"DoctrineEncryptBundle\\Tests\\": "tests/"
 		}
 	},
 	"config": {

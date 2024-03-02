@@ -1,9 +1,0 @@
-services:
-    # Use the regular annotation reader
-    ambta_doctrine_annotation_reader: "@annotations.reader"
-
-    ambta_doctrine_encrypt.orm_subscriber:
-        class: Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber
-        arguments: ["@ambta_doctrine_annotation_reader", "@ambta_doctrine_encrypt.encryptor"]
-        tags:
-            -  { name: doctrine.event_subscriber }

@@ -1,11 +1,5 @@
 # Usage
 
-### Column Type
-
-Ensure that the column type for the property is always set to string or text.
-
-The column type should always relate back to one of the database supported string types as the encrypted data saved to the database will always be a string.
-
 ### Entity
 
 ``` php
@@ -38,75 +32,6 @@ class User {
 
 It is as simple as that, the field will now be encrypted the first time the users entity gets edited.
 We keep an <ENC> prefix to check if data is encrypted or not so, unencrypted data will still work even if the field is encrypted.
-
-#### Supported Data Types
-
-The supported data types to be encrypted and decrypted are:
-* string (The Default)
-* datetime
-* json
-* array
-
-Example usage in the Entity:
-
-```php
-namespace Acme\DemoBundle\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
-
-// importing @Encrypted annotation
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="test")
- */
-class Test {
-
-    ..
-
-    /**
-     * @ORM\Column(type="string", name="string")
-     * @Encrypted
-     * @var string
-     */
-    private $string;
-
-    /**
-     * @ORM\Column(type="string", name="another_string")
-     * @Encrypted(type="string")
-     * @var string
-     */
-    private $anotherString;
-
-    /**
-     * @ORM\Column(type="text", name="datetime")
-     * @Encrypted(type="datetime")
-     * @var DateTime
-     */
-    private $datetime;
-
-    /**
-     * @ORM\Column(type="text", name="json")
-     * @Encrypted(type="json")
-     * @var array
-     */
-    private $json;
-
-    /**
-     * @ORM\Column(type="text", name="array")
-     * @Encrypted(type="array")
-     * @var array
-     */
-    private $array;
-
-    ..
-
-}
-```
-
-Please note again that the ORM Column types relate to string values as the saved data whould be the encrypted string.
-If using MySql for example you will not be able to use the JSON functions directly in the database when the json data is encrypted.
 
 ### Entity Method Behaviour
 

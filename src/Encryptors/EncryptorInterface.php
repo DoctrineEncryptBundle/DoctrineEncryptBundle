@@ -1,11 +1,9 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Encryptors;
+namespace DoctrineEncryptBundle\Encryptors;
 
 /**
  * Encryptor interface for encryptors
- *
- * @author Victor Melnik <melnikvictorl@gmail.com>
  */
 interface EncryptorInterface
 {

@@ -51,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         # normal, highest, non-dev installs
-        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
+        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
         composer-options: ['--prefer-stable']
         dependency-versions: ['highest']
         include:
@@ -129,3 +129,15 @@ jobs:
       - name: Demo symfony7.x - Unit Tests
         run: demo/symfony7.x/vendor/bin/simple-phpunit -c demo/symfony7.x/phpunit.xml.dist
         if: ${{ startsWith(matrix.php-version , '8.2') }}
+
+      - name: Demo symfony7.x Doctrine3.x - Install  dependencies
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "${{ matrix.dependency-versions }}"
+          composer-options: "--prefer-dist --no-progress"
+          working-directory: "demo/symfony7.x_doctrine3.x"
+        if: ${{ startsWith(matrix.php-version , '8.3') }}
+
+      - name: Demo symfony7.x Doctrine3.x - Unit Tests
+        run: demo/symfony7.x_doctrine3.x/vendor/bin/simple-phpunit -c demo/symfony7.x_doctrine3.x/phpunit.xml.dist
+        if: ${{ startsWith(matrix.php-version , '8.3') }}

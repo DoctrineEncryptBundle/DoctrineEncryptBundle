@@ -1,19 +1,17 @@
 <?php
 
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity()]
 class VehicleCar extends AbstractVehicle
 {
     /**
-     * @ORM\Column(type="string", length=10)
      * @var string
      */
+    #[ORM\Column(type:"string", length:10)]
     private $licensePlate;
 
     /**

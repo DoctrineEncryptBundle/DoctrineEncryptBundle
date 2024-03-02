@@ -19,7 +19,9 @@
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x/.env.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x/.env.test.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.local",
-            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.test.local"
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.test.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x_doctrine3.x/.env.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x_doctrine3.x/.env.test.local"
         ]
     },
     "extra": {
@@ -27,9 +29,11 @@
             "shared/templates":       "symfony5.4/templates",
             "./shared/templates":     "symfony6.x/templates",
             "././shared/templates":   "symfony7.x/templates",
+            "./././shared/templates":   "symfony7.x_doctrine3.x/templates",
             "shared/var/data.db":     "symfony5.4/var/data.db",
             "./shared/var/data.db":   "symfony6.x/var/data.db",
-            "././shared/var/data.db": "symfony7.x/var/data.db"
+            "././shared/var/data.db": "symfony7.x/var/data.db",
+            "./././shared/var/data.db": "symfony7.x_doctrine3.x/var/data.db"
         }
     }
 }

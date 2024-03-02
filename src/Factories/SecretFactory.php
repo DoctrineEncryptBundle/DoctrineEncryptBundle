@@ -1,10 +1,10 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Factories;
+namespace DoctrineEncryptBundle\Factories;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
+use DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
+use DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
 use Symfony\Component\Filesystem\Filesystem;
 

@@ -1,16 +1,14 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Command;
+namespace DoctrineEncryptBundle\Command;
 
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use DoctrineEncryptBundle\DoctrineEncryptBundle;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Get status of doctrine encrypt bundle and the database.
- *
- * @author Marcel van Nuil <marcel@ambta.com>
- * @author Michael Feinbier <michael@feinbier.net>
  */
 class DoctrineEncryptStatusCommand extends AbstractCommand
 {
@@ -29,19 +27,26 @@ class DoctrineEncryptStatusCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $encryptTypes = array_keys(DoctrineEncryptBundle::ENCRYPT_TYPES);
 
         $totalCount = 0;
+        $encryptDetails = [];
+        // Get entity manager metadata
+        $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
         foreach ($metaDataArray as $metaData) {
-            if ($metaData instanceof ClassMetadataInfo && $metaData->isMappedSuperclass) {
+            if ($metaData instanceof ClassMetadata && $metaData->isMappedSuperclass) {
                 continue;
             }
 
             $count = 0;
-            $encryptedPropertiesCount = count($this->getEncryptionableProperties($metaData));
-            if ($encryptedPropertiesCount > 0) {
-                $totalCount += $encryptedPropertiesCount;
-                $count += $encryptedPropertiesCount;
+            foreach ($metaData->fieldMappings as $fieldMapping) {
+                if (in_array ($fieldMapping['type'], $encryptTypes)) {
+                    if (! array_key_exists($metaData->name, $encryptDetails)) {
+                        $encryptDetails[$metaData->name] = true;
+                    }
+                    $count++;
+                    $totalCount++;
+                }
             }
 
             if ($count > 0) {
@@ -52,7 +57,7 @@ class DoctrineEncryptStatusCommand extends AbstractCommand
         }
 
         $output->writeln('');
-        $output->writeln(sprintf('<info>%d</info> entities found which are containing <info>%d</info> encrypted properties.', count($metaDataArray), $totalCount));
+        $output->writeln(sprintf('<info>%d</info> entities found which contain <info>%d</info> encrypted properties.', count($encryptDetails), $totalCount));
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }

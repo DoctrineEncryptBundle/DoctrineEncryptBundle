@@ -1,32 +1,24 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- *
- */
+#[ORM\Entity()]
 class CascadeTarget
 {
     /**
      * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
+    #[ORM\Id]
+    #[ORM\Column(type:"integer")]
+    #[ORM\GeneratedValue()]
     private $id;
 
-    /**
-     * @Ambta\DoctrineEncryptBundle\Configuration\Encrypted()
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type:"encrypted", nullable:true)]
     private $secret;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type:"string", nullable:true)]
     private $notSecret;
 
     /**
@@ -68,5 +60,4 @@ class CascadeTarget
     {
         $this->notSecret = $notSecret;
     }
-
 }

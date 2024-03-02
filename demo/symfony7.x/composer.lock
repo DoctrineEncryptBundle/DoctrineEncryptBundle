@@ -1249,12 +1249,12 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Ambta\\DoctrineEncryptBundle\\": "src/"
+                    "DoctrineEncryptBundle\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/"
+                    "DoctrineEncryptBundle\\Tests\\": "tests/"
                 }
             },
             "scripts": {

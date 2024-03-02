@@ -1,9 +1,9 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
+namespace DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
 
-use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
+use DoctrineEncryptBundle\Encryptors\EncryptorInterface;
+use DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 
 class BasicQueryHaliteTest extends AbstractBasicQueryTestCase
 {
