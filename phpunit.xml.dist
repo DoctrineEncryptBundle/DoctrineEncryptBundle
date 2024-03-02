@@ -18,10 +18,12 @@
     <coverage>
         <include>
             <directory>./Command</directory>
-            <directory>./Configuration</directory>
             <directory>./DependencyInjection</directory>
             <directory>./Encryptors</directory>
-            <directory>./Subscribers</directory>
+            <directory>./Factories</directory>
+            <directory>./Service</directory>
+            <directory>./Traits</directory>
+            <directory>./Types</directory>
         </include>
     </coverage>
 
@@ -29,5 +31,6 @@
         <ini name="error_reporting" value="E_ALL ^ E_DEPRECATED" />
         <env name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
         <env name="KERNEL_CLASS" value="AppKernel" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
 </phpunit>
