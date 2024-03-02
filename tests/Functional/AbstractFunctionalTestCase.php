@@ -94,7 +94,7 @@ abstract class AbstractFunctionalTestCase extends TestCase
                 $cache,
                 $reportFieldsWhereDeclared
             );
-            $config->setLazyGhostObjectEnabled (true);
+            // $config->setLazyGhostObjectEnabled (true);
             $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
             // obtaining the entity manager
             $conn = DriverManager::getConnection($connOptions, $config);
