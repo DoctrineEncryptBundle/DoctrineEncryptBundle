@@ -9,6 +9,7 @@ use DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use DoctrineEncryptBundle\Service\Encrypt;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use DoctrineEncryptBundle\DoctrineEncryptBundle;
@@ -66,7 +67,7 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
         if (version_compare(PHP_VERSION, '8.0.0', '<')) {
             $useSimpleAnnotationReader = false;
-            $config = ORMSetup::createAnnotationMetadataConfiguration(
+            $config = Setup::createAnnotationMetadataConfiguration(
                 array(__DIR__.'/fixtures/Entity'),
                 $isDevMode,
                 $proxyDir,
