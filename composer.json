@@ -14,7 +14,8 @@
 		"symfony/http-kernel": "^5.4|^6.0|^7.0",
 		"symfony/config": "^5.4|^6.0|^7.0",
 		"doctrine/annotations": "^1.13|^2.0",
-		"symfony/expression-language": "^5.4|^6.0|^7.0"
+		"symfony/expression-language": "^5.4|^6.0|^7.0",
+		"symfony/var-exporter": "^6.2|^7.0"
 	},
 	"require-dev": {
 		"paragonie/halite": "^4.6|^5.0",
