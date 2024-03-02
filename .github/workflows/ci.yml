@@ -40,7 +40,7 @@ jobs:
         run:  "vendor/bin/phpstan analyze"
 
       - name: "PHPCompatibility"
-        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 7.2-8.1"
+        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 7.2-8.3"
 
   tests:
     name: "Tests ${{ matrix.php-version }} ${{ matrix.dependency-versions }}"
