@@ -85,8 +85,8 @@ abstract class AbstractFunctionalTestCase extends TestCase
                 $reportFieldsWhereDeclared
             );
             $config->setLazyGhostObjectEnabled (true);
+            $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
         }
-        $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
 
         // database configuration parameters
         $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
