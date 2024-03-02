@@ -9,15 +9,24 @@ class CascadeTarget
 {
     /**
      * @var int
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
      */
     #[ORM\Id]
     #[ORM\Column(type:"integer")]
     #[ORM\GeneratedValue()]
     private $id;
 
+    /**
+     * @ORM\Column(type="encrypted", nullable=true)
+     */
     #[ORM\Column(type:"encrypted", nullable:true)]
     private $secret;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     #[ORM\Column(type:"string", nullable:true)]
     private $notSecret;
 

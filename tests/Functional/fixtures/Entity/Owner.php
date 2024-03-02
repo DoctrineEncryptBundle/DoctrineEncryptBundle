@@ -11,21 +11,33 @@ class Owner
 
     /**
      * @var int
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
      */
     #[ORM\Id]
     #[ORM\Column(type:"integer")]
     #[ORM\GeneratedValue]
     private $id;
 
+    /**
+     * @ORM\Column(type="encrypted", nullable=true)
+     */
     #[ORM\Column(type:"encrypted", nullable:true)]
     private $secret;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     #[ORM\Column(type:"string", nullable:true)]
     private $notSecret;
 
-    #[ORM\OneToOne(
-          targetEntity:CascadeTarget::class,
-          cascade:["persist"])]
+     /**
+     * @ORM\OneToOne(
+     *     targetEntity="DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget",
+     *     cascade={"persist"})
+     */
+    #[ORM\OneToOne(targetEntity:CascadeTarget::class, cascade:["persist"])]
     private $cascaded;
 
     public function getId()
