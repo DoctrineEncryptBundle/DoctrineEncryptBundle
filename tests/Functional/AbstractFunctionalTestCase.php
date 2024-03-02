@@ -60,6 +60,13 @@ abstract class AbstractFunctionalTestCase extends TestCase
             $addedType->setService($this->service);
         }
 
+        // database configuration parameters
+        $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
+        $connOptions = array(
+            'driver' => 'pdo_sqlite',
+            'path'   => $this->dbFile,
+        );
+
         // Create a simple "default" Doctrine ORM configuration
         $isDevMode = true;
         $proxyDir = null;
@@ -74,6 +81,8 @@ abstract class AbstractFunctionalTestCase extends TestCase
                 $cache,
                 $useSimpleAnnotationReader
             );
+            // obtaining the entity manager
+            $this->entityManager = EntityManager::create($connOptions, $config);
         }
         else
         {
@@ -87,19 +96,12 @@ abstract class AbstractFunctionalTestCase extends TestCase
             );
             $config->setLazyGhostObjectEnabled (true);
             $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+            // obtaining the entity manager
+            $conn = DriverManager::getConnection($connOptions, $config);
+            $dbalConf = $conn->getConfiguration();
+            $this->entityManager = new EntityManager($conn, $dbalConf);
         }
 
-        // database configuration parameters
-        $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $connOptions = array(
-            'driver' => 'pdo_sqlite',
-            'path'   => $this->dbFile,
-        );
-
-        // obtaining the entity manager
-        $conn = DriverManager::getConnection($connOptions, $config);
-        $dbalConf = $conn->getConfiguration();
-        $this->entityManager = new EntityManager($conn, $dbalConf);
 
         $schemaTool = new SchemaTool($this->entityManager);
         $classes    = $this->entityManager->getMetadataFactory()->getAllMetadata();
