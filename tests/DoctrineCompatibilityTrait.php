@@ -11,7 +11,12 @@ trait DoctrineCompatibilityTrait
      */
     public function executeStatementFetchAll(\Doctrine\DBAL\Statement $statement)
     {
-        return $statement->executeQuery()->fetchAllAssociative();
+        if (method_exists($statement,'executeQuery')) {
+            return $statement->executeQuery()->fetchAllAssociative();
+        } else {
+            $statement->execute();
+            return $statement->fetchAll();
+        }
     }
 
     /**
@@ -21,6 +26,11 @@ trait DoctrineCompatibilityTrait
      */
     public function executeStatementFetch(\Doctrine\DBAL\Statement $statement)
     {
-        return $statement->executeQuery()->fetchAssociative();
+        if (method_exists($statement,'executeQuery')) {
+            return $statement->executeQuery()->fetchAssociative();
+        } else {
+            $statement->execute();
+            return $statement->fetch();
+        }
     }
 }
