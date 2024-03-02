@@ -71,7 +71,7 @@ class Encrypt
      * @return mixed
      *
      */
-    public function encrypt(string $type, mixed $value): mixed
+    public function encrypt(string $type, $value): mixed
     {
         // TODO : probably cannot return null when $this->encryptor is not set
         if (is_null ($value) || is_null ($this->encryptor))
@@ -103,7 +103,7 @@ class Encrypt
      * @return mixed
      *
      */
-    public function decrypt(string $type, mixed $value): mixed
+    public function decrypt(string $type, $value): mixed
     {
         // TODO : probably cannot return null when $this->encryptor is not set
         if (is_null ($value) || is_null ($this->encryptor))
