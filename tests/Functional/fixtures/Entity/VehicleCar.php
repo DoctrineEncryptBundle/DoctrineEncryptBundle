@@ -5,15 +5,11 @@ namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
 #[ORM\Entity()]
 class VehicleCar extends AbstractVehicle
 {
     /**
      * @var string
-     * @ORM\Column(type="string", length=10)
      */
     #[ORM\Column(type:"string", length:10)]
     private $licensePlate;

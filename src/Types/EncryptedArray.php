@@ -12,12 +12,12 @@ class EncryptedArray extends TextType
 
     const TYPE = 'encrypted_array';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
         return $this->service->decrypt ('simple_array', $value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         return $this->service->encrypt ('simple_array', $value);
     }

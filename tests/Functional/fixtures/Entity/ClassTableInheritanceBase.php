@@ -4,11 +4,6 @@ namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
- */
 #[ORM\Entity]
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name:"discr", type:"string")]
@@ -17,24 +12,15 @@ class ClassTableInheritanceBase
 
     /**
      * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
     #[ORM\Id]
     #[ORM\Column(type:"integer")]
     #[ORM\GeneratedValue]
     private $id;
 
-    /**
-     * @ORM\Column(type="encrypted", nullable=true)
-     */
     #[ORM\Column(type:"encrypted", nullable:true)]
     private $secretBase;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type:"string", nullable:true)]
     private $notSecretBase;
 

@@ -5,16 +5,14 @@
 	"license": "MIT",
 	"description": "Encrypted symfony entity's by verified and standardized libraries",
 	"require": {
-		"php": "^7.2|^8.0",
+		"php": "^8.1",
 		"doctrine/orm": "^2.5|^3.0",
 		"doctrine/doctrine-bundle": "^2.0.8|^2.1",
 		"symfony/property-access": "^5.4|^6.0|^7.0",
 		"symfony/dependency-injection": "^5.4|^6.0|^7.0",
 		"symfony/yaml": "^5.4|^6.0|^7.0",
 		"symfony/http-kernel": "^5.4|^6.0|^7.0",
-		"symfony/config": "^5.4|^6.0|^7.0",
-		"doctrine/annotations": "^1.13|^2.0",
-		"symfony/expression-language": "^5.4|^6.0|^7.0"
+		"symfony/config": "^5.4|^6.0|^7.0"
 	},
 	"require-dev": {
 		"paragonie/halite": "^4.6|^5.0",
@@ -22,7 +20,8 @@
 		"doctrine/cache": "^1.11",
 		"phpstan/phpstan": "^1.4",
 		"phpcompatibility/php-compatibility": "^9.3",
-		"symfony/phpunit-bridge": "^7.0"
+		"symfony/phpunit-bridge": "^7.0",
+		"symfony/expression-language": "^5.4|^6.0|^7.0"
 	},
 	"suggest": {
 		"defuse/php-encryption": "Alternative for halite for use with older php-versions",

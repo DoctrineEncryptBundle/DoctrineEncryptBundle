@@ -40,7 +40,7 @@ class DoctrineEncryptBundle extends Bundle
                 $databasePlatform = $connection->getDatabasePlatform();
                 if (! $databasePlatform->hasDoctrineTypeMappingFor($encyptName))
                 {
-                    $databasePlatform->registerDoctrineTypeMapping($encyptName,$encyptName);
+                    $databasePlatform->registerDoctrineTypeMapping($encyptName, $encyptName);
                 }
             }
         }      

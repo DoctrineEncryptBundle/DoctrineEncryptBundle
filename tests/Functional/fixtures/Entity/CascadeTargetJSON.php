@@ -4,32 +4,20 @@ namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
 #[ORM\Entity()]
 class CascadeTargetJSON
 {
     /**
      * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
     #[ORM\Id]
     #[ORM\Column(type:"integer")]
     #[ORM\GeneratedValue()]
     private $id;
 
-    /**
-     * @ORM\Column(type="encrypted_json", nullable=true)
-     */
     #[ORM\Column(type:"encrypted_json", nullable:true)]
     private $secret;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type:"string", nullable:true)]
     private $notSecret;
 

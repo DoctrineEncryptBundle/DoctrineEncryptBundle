@@ -9,7 +9,6 @@ use DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use DoctrineEncryptBundle\Service\Encrypt;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use DoctrineEncryptBundle\DoctrineEncryptBundle;
@@ -71,37 +70,20 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $isDevMode = true;
         $proxyDir = null;
         $cache = null;
-
-        if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-            $useSimpleAnnotationReader = false;
-            $config = Setup::createAnnotationMetadataConfiguration(
-                array(__DIR__.'/fixtures/Entity'),
-                $isDevMode,
-                $proxyDir,
-                $cache,
-                $useSimpleAnnotationReader
-            );
-            // obtaining the entity manager
-            $this->entityManager = EntityManager::create($connOptions, $config);
-        }
-        else
-        {
-            $reportFieldsWhereDeclared = true;
-            $config = ORMSetup::createAttributeMetadataConfiguration(
-                array(__DIR__.'/fixtures/Entity'),
-                $isDevMode,
-                $proxyDir,
-                $cache,
-                $reportFieldsWhereDeclared
-            );
-            // $config->setLazyGhostObjectEnabled (true);
-            $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
-            // obtaining the entity manager
-            $conn = DriverManager::getConnection($connOptions, $config);
-            $dbalConf = $conn->getConfiguration();
-            $this->entityManager = new EntityManager($conn, $dbalConf);
-        }
-
+        $reportFieldsWhereDeclared = true;
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            array(__DIR__.'/fixtures/Entity'),
+            $isDevMode,
+            $proxyDir,
+            $cache,
+            $reportFieldsWhereDeclared
+        );
+        $config->setLazyGhostObjectEnabled (true);
+        $config->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+        // obtaining the entity manager
+        $conn = DriverManager::getConnection($connOptions, $config);
+        $dbalConf = $conn->getConfiguration();
+        $this->entityManager = new EntityManager($conn, $dbalConf);
 
         $schemaTool = new SchemaTool($this->entityManager);
         $classes    = $this->entityManager->getMetadataFactory()->getAllMetadata();

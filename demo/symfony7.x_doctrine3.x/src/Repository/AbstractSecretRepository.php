@@ -9,7 +9,7 @@ abstract class AbstractSecretRepository extends ServiceEntityRepository
     /**
      * @return array<int, object> The objects.
      */
-    public function findAll()
+    public function findAll(): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('s')
