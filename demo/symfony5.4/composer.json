@@ -7,7 +7,7 @@
         "php": "^8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/orm": "^2.18",
+        "doctrine/orm": "^2.13",
         "doctrineencryptbundle/doctrine-encrypt-bundle": "@dev",
         "doctrine/persistence": "^3.2",
         "paragonie/halite": "^4.6",
@@ -18,7 +18,7 @@
         "symfony/runtime": "5.4.*",
         "symfony/twig-bundle": "5.4.*",
         "symfony/yaml": "5.4.*",
-        "doctrine/annotations": "^2.0"
+        "doctrine/annotations": "^1.13|^2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^7.0"
