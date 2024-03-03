@@ -4,7 +4,7 @@ namespace App\Repository\Attribute;
 
 use App\Entity\Attribute\Secret;
 use App\Repository\AbstractSecretRepository;
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Secret|null find($id, $lockMode = null, $lockVersion = null)
@@ -13,7 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
  */
 class SecretRepository extends AbstractSecretRepository
 {
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Secret::class);
     }
