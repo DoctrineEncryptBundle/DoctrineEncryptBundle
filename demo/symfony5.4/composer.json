@@ -21,7 +21,6 @@
         "doctrine/annotations": "^1.13|^2.0"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^7.0.4"
     },
     "config": {
