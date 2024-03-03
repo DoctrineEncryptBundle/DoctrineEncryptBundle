@@ -2,7 +2,6 @@
 
 namespace App\Entity\Attribute;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use App\Repository\Attribute\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,8 +14,7 @@ class Secret implements \App\Entity\SecretInterface
     private $name;
 
 
-    #[ORM\Column(type:"string", nullable:false)]
-    #[Encrypted]
+    #[ORM\Column(type:"encrypted", nullable:false)]
     private $secret;
 
     /**

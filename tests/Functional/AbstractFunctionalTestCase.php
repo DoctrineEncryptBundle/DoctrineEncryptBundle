@@ -1,79 +1,92 @@
 <?php
 
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional;
+namespace DoctrineEncryptBundle\Tests\Functional;
 
-
-use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
-use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
+use DoctrineEncryptBundle\Encryptors\EncryptorInterface;
+use DoctrineEncryptBundle\Service\Encrypt;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
+use DoctrineEncryptBundle\DoctrineEncryptBundle;
+use DoctrineEncryptBundle\Tests\DoctrineCompatibilityTrait;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Util\InvalidArgumentHelper;
 
 abstract class AbstractFunctionalTestCase extends TestCase
 {
-    /** @var DoctrineEncryptSubscriber */
-    protected $subscriber;
-    /** @var EncryptorInterface */
+    use DoctrineCompatibilityTrait;
+    
+    /**
+     *  @var Encrypt 
+     */
+    protected $service;
+
+    /** 
+     * @var EncryptorInterface 
+     */
     protected $encryptor;
-    /** @var false|string */
+
+    /** 
+     * @var false|string
+     */
     protected $dbFile;
-    /** @var EntityManager */
+
+    /** 
+     * @var EntityManager
+     */
     protected $entityManager;
-    /** @var DebugStack */
-    protected $sqlLoggerStack;
 
     abstract protected function getEncryptor(): EncryptorInterface;
-
+    
     public function setUp(): void
     {
-        // Create a simple "default" Doctrine ORM configuration for Annotations
-        $isDevMode                 = true;
-        $proxyDir                  = null;
-        $cache                     = null;
-        $useSimpleAnnotationReader = false;
+        $this->encryptor = $this->getEncryptor();
+        $this->service = new Encrypt($this->encryptor);
 
-        $config = Setup::createAnnotationMetadataConfiguration(
-            array(__DIR__ . "/fixtures/Entity"),
-            $isDevMode,
-            $proxyDir,
-            $cache,
-            $useSimpleAnnotationReader
-        );
+        foreach (DoctrineEncryptBundle::ENCRYPT_TYPES as $encyptName => $encryptClass)
+        {
+            if (! Type::hasType($encyptName))
+            {
+                Type::addType($encyptName, $encryptClass);
+            }
+            /** @var \DoctrineEncryptBundle\Traits\DoctrineEncrypt $addedType */
+            $addedType = Type::getType($encyptName);
+            $addedType->setService($this->service);
+        }
 
         // database configuration parameters
         $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $conn = array(
+        $connOptions = array(
             'driver' => 'pdo_sqlite',
             'path'   => $this->dbFile,
         );
 
+        // Create a simple "default" Doctrine ORM configuration
+        $isDevMode = true;
+        $proxyDir = null;
+        $cache = null;
+        $reportFieldsWhereDeclared = true;
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            array(__DIR__.'/fixtures/Entity'),
+            $isDevMode,
+            $proxyDir,
+            $cache,
+            $reportFieldsWhereDeclared
+        );
         // obtaining the entity manager
-        $this->entityManager = EntityManager::create($conn, $config);
+        $conn = DriverManager::getConnection($connOptions, $config);
+        $dbalConf = $conn->getConfiguration();
+        $this->entityManager = new EntityManager($conn, $dbalConf);
 
         $schemaTool = new SchemaTool($this->entityManager);
         $classes    = $this->entityManager->getMetadataFactory()->getAllMetadata();
         $schemaTool->dropSchema($classes);
         $schemaTool->createSchema($classes);
-
-        $this->sqlLoggerStack = new DebugStack();
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger($this->sqlLoggerStack);
-
-        $this->encryptor = $this->getEncryptor();
-        $annotationCacheDirectory = __DIR__.'/cache';
-        $this->createNewCacheDirectory ($annotationCacheDirectory);
-        $annotationReader = new AttributeAnnotationReader (new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
-        $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
-        $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
 
         error_reporting(E_ALL);
     }
@@ -82,59 +95,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
     {
         $this->entityManager->getConnection()->close();
         unlink($this->dbFile);
-    }
-
-    protected function createNewCacheDirectory (string $annotationCacheDirectory): void
-    {
-        $this->recurseRmdir ($annotationCacheDirectory);
-        mkdir ($annotationCacheDirectory);
-    }
-
-    protected function recurseRmdir ($dir): bool
-    {
-        $contents = scandir($dir);
-        if (is_array ($contents))
-        {
-            $files = array_diff ($contents, array('.','..'));
-            foreach ($files as $file)
-            {
-                (is_dir("$dir/$file") && !is_link("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
-            }
-            return rmdir($dir);
-        }
-
-        return false;
-    }
-
-    protected function getLatestInsertQuery(): ?array
-    {
-        $insertQueries = array_values(array_filter($this->sqlLoggerStack->queries, static function ($queryData) {
-            return stripos($queryData['sql'], 'INSERT ') === 0;
-        }));
-
-        return current(array_reverse($insertQueries)) ?: null;
-    }
-
-    protected function getLatestUpdateQuery(): ?array
-    {
-        $updateQueries = array_values(array_filter($this->sqlLoggerStack->queries,static function ($queryData) {
-            return stripos($queryData['sql'], 'UPDATE ') === 0;
-        }));
-
-        return current(array_reverse($updateQueries)) ?: null;
-    }
-
-    /**
-     * Using the SQL Logger Stack this method retrieves the current query count executed in this test.
-     */
-    protected function getCurrentQueryCount(): int
-    {
-        return count($this->sqlLoggerStack->queries);
-    }
-
-    protected function resetQueryStack(): void
-    {
-        $this->sqlLoggerStack->queries = [];
     }
 
     /**

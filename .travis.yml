@@ -8,10 +8,10 @@ matrix:
   fast_finish: true
   include:
       # Minimum supported versions
-    - php: 7.2
+    - php: 8.1
       env: COMPOSER_FLAGS="--prefer-lowest"
       ## with sodium extension installed.
-    - php: 7.2
+    - php: 8.1
       env: COMPOSER_FLAGS="--prefer-lowest"
       before_install:
         - sudo add-apt-repository ppa:ondrej/php -y
@@ -23,17 +23,14 @@ matrix:
         - printf "\n" | pecl install libsodium
         - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction
 
-    - php: 7.3
+    - php: 8.2
       env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
 
-    - php: 7.4
-      env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
-
-    - php: 8.0
+    - php: 8.3
       env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
 
       # Latest commit to master
-    - php: 7.3
+    - php: 8.1
       env: STABILITY="dev"
 
   allow_failures:

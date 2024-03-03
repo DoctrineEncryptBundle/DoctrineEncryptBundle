@@ -1,41 +1,29 @@
 <?php
 
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- *
- */
+#[ORM\Entity()]
 class Owner
 {
+
     /**
      * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
+    #[ORM\Id]
+    #[ORM\Column(type:"integer")]
+    #[ORM\GeneratedValue]
     private $id;
 
-    /**
-     * @Encrypted
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type:"encrypted", nullable:true)]
     private $secret;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type:"string", nullable:true)]
     private $notSecret;
 
-    /**
-     * @ORM\OneToOne(
-     *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget",
-     *     cascade={"persist"})
-     */
+    #[ORM\OneToOne(targetEntity:CascadeTarget::class, cascade:["persist"])]
     private $cascaded;
 
     public function getId()

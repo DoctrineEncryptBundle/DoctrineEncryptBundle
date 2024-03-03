@@ -1,9 +1,9 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\DependencyInjection;
+namespace DoctrineEncryptBundle\DependencyInjection;
 
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
+use DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
+use DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -41,12 +41,12 @@ class DoctrineEncryptExtension extends Extension
         }
 
         // Set parameters
-        $container->setParameter('ambta_doctrine_encrypt.encryptor_class_name', $config['encryptor_class_full']);
-        $container->setParameter('ambta_doctrine_encrypt.secret_directory_path',$config['secret_directory_path']);
-        $container->setParameter('ambta_doctrine_encrypt.enable_secret_generation',$config['enable_secret_generation']);
+        $container->setParameter('doctrine_encrypt.encryptor_class_name', $config['encryptor_class_full']);
+        $container->setParameter('doctrine_encrypt.secret_directory_path',$config['secret_directory_path']);
+        $container->setParameter('doctrine_encrypt.enable_secret_generation',$config['enable_secret_generation']);
 
         if (isset($config['secret'])) {
-            $container->setParameter('ambta_doctrine_encrypt.secret',$config['secret']);
+            $container->setParameter('doctrine_encrypt.secret',$config['secret']);
         }
 
         // Load service file
@@ -64,20 +64,6 @@ class DoctrineEncryptExtension extends Extension
         if (Kernel::MAJOR_VERSION < 5 || (Kernel::MAJOR_VERSION === 5 && Kernel::MINOR_VERSION < 4)) {
             throw new \RuntimeException('doctrineencryptbundle/doctrine-encrypt-bundle expects symfony-version >= 5.4!');
         }
-
-        // Symfony 5-6
-        if (Kernel::MAJOR_VERSION < 7) {
-            // PHP 7.x (no attributes)
-            if (PHP_VERSION_ID < 80000) {
-                $loader->load('services_subscriber_with_annotations.yml');
-            // PHP 8.x (annotations and attributes)
-            } else {
-                $loader->load('services_subscriber_with_annotations_and_attributes.yml');
-            }
-        // Symfony 7 (only attributes)
-        } else {
-            $loader->load('service_listeners_with_attributes.yml');
-        }
     }
 
     /**
@@ -87,6 +73,6 @@ class DoctrineEncryptExtension extends Extension
      */
     public function getAlias(): string
     {
-        return 'ambta_doctrine_encrypt';
+        return 'doctrine_encrypt';
     }
 }

@@ -1,27 +1,26 @@
 services:
-    ambta_doctrine_encrypt.subscriber:
-        alias: ambta_doctrine_encrypt.orm_subscriber
+    doctrine_encrypt.encrypt_service:
+        class: DoctrineEncryptBundle\Service\Encrypt
+        arguments: ["@doctrine_encrypt.encryptor"]
+        public: true
 
-    ambta_doctrine_encrypt.command.decrypt.database:
-        class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
+    doctrine_encrypt.command.decrypt.database:
+        class: DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_annotation_reader"
-            - "@ambta_doctrine_encrypt.subscriber"
+            - "@doctrine_encrypt.encrypt_service"
 
-    ambta_doctrine_encrypt.command.encrypt.database:
-        class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand
+    doctrine_encrypt.command.encrypt.database:
+        class: DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_annotation_reader"
-            - "@ambta_doctrine_encrypt.subscriber"
+            - "@doctrine_encrypt.encrypt_service"
 
-    ambta_doctrine_encrypt.command.encrypt.status:
-        class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand
+    doctrine_encrypt.command.encrypt.status:
+        class: DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_annotation_reader"
-            - "@ambta_doctrine_encrypt.subscriber"
+            - "@doctrine_encrypt.encrypt_service"

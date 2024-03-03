@@ -1,18 +1,14 @@
 <?php
-namespace Ambta\DoctrineEncryptBundle\Command;
+namespace DoctrineEncryptBundle\Command;
 
-use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
-use Doctrine\Common\Annotations\Reader;
+use DoctrineEncryptBundle\Service\Encrypt;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base command containing usefull base methods.
- *
- * @author Michael Feinbier <michael@feinbier.net>
  **/
 abstract class AbstractCommand extends Command
 {
@@ -22,31 +18,20 @@ abstract class AbstractCommand extends Command
     protected $entityManager;
 
     /**
-     * @var DoctrineEncryptSubscriber
+     * @var Encrypt
      */
-    protected $subscriber;
+    protected $service;
 
     /**
-     * @var Reader|AttributeReader
+     * @param ContainerInterface $container
+     * 
+     * @return void
      */
-    protected $annotationReader;
-
-    /**
-     * AbstractCommand constructor.
-     *
-     * @param EntityManager             $entityManager
-     * @param Reader|AttributeReader    $annotationReader
-     * @param DoctrineEncryptSubscriber $subscriber
-     */
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        $annotationReader,
-        DoctrineEncryptSubscriber $subscriber
-    ) {
+    public function __construct(EntityManagerInterface $entityManager, Encrypt $service)
+    {
         parent::__construct();
         $this->entityManager = $entityManager;
-        $this->annotationReader = $annotationReader;
-        $this->subscriber = $subscriber;
+        $this->service = $service;
     }
 
     /**
@@ -74,54 +59,5 @@ abstract class AbstractCommand extends Command
         $query = $this->entityManager->createQuery(sprintf('SELECT COUNT(o) FROM %s o', $entityName));
 
         return (int) $query->getSingleScalarResult();
-    }
-
-    /**
-     * Return an array of entity-metadata for all entities
-     * that have at least one encrypted property.
-     *
-     * @return array
-     */
-    protected function getEncryptionableEntityMetaData(): array
-    {
-        $validMetaData = [];
-        $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
-
-        foreach ($metaDataArray as $entityMetaData)
-        {
-            if ($entityMetaData instanceof ClassMetadataInfo and $entityMetaData->isMappedSuperclass) {
-                continue;
-            }
-
-            $properties = $this->getEncryptionableProperties($entityMetaData);
-            if (count($properties) == 0) {
-                continue;
-            }
-
-            $validMetaData[] = $entityMetaData;
-        }
-
-        return $validMetaData;
-    }
-
-    /**
-     * @param $entityMetaData
-     *
-     * @return array
-     */
-    protected function getEncryptionableProperties($entityMetaData): array
-    {
-        //Create reflectionClass for each meta data object
-        $reflectionClass = new \ReflectionClass($entityMetaData->name);
-        $propertyArray = $reflectionClass->getProperties();
-        $properties    = [];
-
-        foreach ($propertyArray as $property) {
-            if ($this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted')) {
-                $properties[] = $property;
-            }
-        }
-
-        return $properties;
     }
 }

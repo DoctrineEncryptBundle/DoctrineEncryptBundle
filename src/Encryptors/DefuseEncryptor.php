@@ -1,13 +1,9 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Encryptors;
-
-use Symfony\Component\Filesystem\Filesystem;
+namespace DoctrineEncryptBundle\Encryptors;
 
 /**
  * Class for encrypting and decrypting with the defuse library
- *
- * @author Michael de Groot <specamps@gmail.com>
  */
 
 class DefuseEncryptor implements EncryptorInterface

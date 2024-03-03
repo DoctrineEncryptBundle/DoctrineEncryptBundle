@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\DependencyInjection;
+namespace DoctrineEncryptBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -21,13 +21,8 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         // Create tree builder
-        $treeBuilder = new TreeBuilder('ambta_doctrine_encrypt');
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config 4.1 and older
-            $rootNode = $treeBuilder->root('ambta_doctrine_encrypt');
-        }
+        $treeBuilder = new TreeBuilder('doctrine_encrypt');
+        $rootNode = $treeBuilder->getRootNode();
 
         // Grammar of config tree
         $rootNode
