@@ -21,7 +21,7 @@
         "doctrine/annotations": "^1.13|^2.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^7.0"
+        "symfony/phpunit-bridge": "^7.0.4"
     },
     "config": {
         "allow-plugins": {
