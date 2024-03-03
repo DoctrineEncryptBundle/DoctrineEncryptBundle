@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b607657f8bb963e1502c3194da36fb42",
+    "content-hash": "e99c69747ede75faeaa5d4d1457999d1",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -1141,11 +1141,11 @@
             "dist": {
                 "type": "path",
                 "url": "../..",
-                "reference": "e71725c3d94df5810c1d62520b843cc40bf1da51"
+                "reference": "d1137a8cd0aefca0c0e25e2a2671cc101c9fb50b"
             },
             "require": {
                 "doctrine/doctrine-bundle": "^2.0.8|^2.1",
-                "doctrine/orm": "^2.5|^3.0",
+                "doctrine/orm": "^2.18|^3.0",
                 "php": "^8.1",
                 "symfony/config": "^5.4|^6.0|^7.0",
                 "symfony/dependency-injection": "^5.4|^6.0|^7.0",
@@ -1159,8 +1159,9 @@
                 "paragonie/halite": "^4.6|^5.0",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^1.4",
+                "squizlabs/php_codesniffer": "^3.8",
                 "symfony/expression-language": "^5.4|^6.0|^7.0",
-                "symfony/phpunit-bridge": "^7.0"
+                "symfony/phpunit-bridge": "^7.0.4"
             },
             "suggest": {
                 "defuse/php-encryption": "Alternative for halite for use with older php-versions",
