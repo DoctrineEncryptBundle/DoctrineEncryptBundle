@@ -18,7 +18,7 @@
         "symfony/runtime": "5.4.*",
         "symfony/twig-bundle": "5.4.*",
         "symfony/yaml": "5.4.*",
-        "doctrine/annotations": "^2.0"
+        "doctrine/annotations": "^1.18|^2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^7.0"
