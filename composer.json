@@ -19,7 +19,8 @@
 		"defuse/php-encryption": "^2.1",
 		"doctrine/cache": "^1.11",
 		"phpstan/phpstan": "^1.4",
-		"phpcompatibility/php-compatibility": "^8.2|^9.3",
+		"phpcompatibility/php-compatibility": "^9.3",
+		"squizlabs/php_codesniffer": "^3.8",
 		"symfony/phpunit-bridge": "^7.0",
 		"symfony/expression-language": "^5.4|^6.0|^7.0"
 	},
