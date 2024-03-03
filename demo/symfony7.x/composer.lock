@@ -1141,7 +1141,7 @@
             "dist": {
                 "type": "path",
                 "url": "../..",
-                "reference": "f1fffbb9a191db39c42493bf4f66ae18398a0113"
+                "reference": "e71725c3d94df5810c1d62520b843cc40bf1da51"
             },
             "require": {
                 "doctrine/doctrine-bundle": "^2.0.8|^2.1",
@@ -1186,7 +1186,7 @@
                     "\"vendor/bin/phpcs\" --config-set installed_paths vendor/phpcompatibility/php-compatibility"
                 ],
                 "phpcs-compatibility-test": [
-                    "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 7.2-8.1"
+                    "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 8.1-8.3"
                 ]
             },
             "license": [
