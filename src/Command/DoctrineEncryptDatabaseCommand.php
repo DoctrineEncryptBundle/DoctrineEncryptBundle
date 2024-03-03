@@ -111,13 +111,6 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         $pac = PropertyAccess::createPropertyAccessor();
         $unitOfWork = $this->entityManager->getUnitOfWork();
         foreach ($encryptDetails as $entityName => $classMeta) {
-            $ctp = $classMeta->changeTrackingPolicy;
-
-            // Tell the table class to not automatically calculate changed values but just
-            // mark those fields as dirty that get passed to propertyChanged function
-            // TODO : ClassMetadata::CHANGETRACKING_NOTIFY does not exist in latest version
-            $classMeta->setChangeTrackingPolicy(ClassMetadata::CHANGETRACKING_NOTIFY);
-
             $i = 0;
             $valueCounter = 0;
             $iterator = $this->getEntityIterator($entityName);
@@ -128,19 +121,34 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
             foreach ($iterator as $row) {
                 $entity = (is_array($row) ? $row[0] : $row);
 
+                $changeData = [];
                 // tell the unit of work that an value has changed no matter if the value
                 // is actually different from the value already persistent
                 // need all the values checked for the count
                 foreach ($metaData->fieldMappings as $fieldMapping) {
                     if (in_array ($fieldMapping['type'], $encryptTypes)) {
                         $value = $pac->getValue($entity, $fieldMapping['fieldName']);
-                        if (! is_null ($value))
+                        if (! is_null ($value) && ! empty($value))
                         {
-                            // TODO : only need to set a single value
                             $valueCounter++;
-                            $unitOfWork->propertyChanged($entity, $fieldMapping['fieldName'], $value, $value);
+                            array_push($changeData, ['fieldName' => $fieldMapping['fieldName'], 'value' => $value]);
                         }
                     }
+                }
+
+                if (count($changeData))
+                {
+                    $originalData = $unitOfWork->getOriginalEntityData($entity);
+                    foreach ($changeData as $changeDetail)
+                    {
+                        $originalData[$changeDetail['fieldName']] = null;
+                    }
+                    $unitOfWork->setOriginalEntityData($entity, $originalData);
+                    foreach ($changeData as $changeDetail)
+                    {
+                        $unitOfWork->propertyChanged($entity, $changeDetail['fieldName'], null, $changeDetail['value']);
+                    }
+                    $this->entityManager->persist($entity);
                 }
 
                 if (($i % $batchSize) === 0) {
@@ -156,7 +164,7 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
             $this->entityManager->flush();
             $this->entityManager->clear();
 
-            $classMeta->setChangeTrackingPolicy($ctp);
+            // $classMeta->setChangeTrackingPolicy($ctp);
         }
 
         // Say it is finished
