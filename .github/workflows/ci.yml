@@ -124,11 +124,11 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "--prefer-dist --no-progress"
           working-directory: "demo/symfony7.x"
-        if: ${{ startsWith(matrix.php-version , '8.2') }}
+        if: ${{ matrix.php-version == '8.2' || matrix.php-version == '8.3' }}
 
       - name: Demo symfony7.x - Unit Tests
         run: demo/symfony7.x/vendor/bin/simple-phpunit -c demo/symfony7.x/phpunit.xml.dist
-        if: ${{ startsWith(matrix.php-version , '8.2') }}
+        if: ${{ matrix.php-version == '8.2' || matrix.php-version == '8.3' }}
 
       - name: Demo symfony7.x Doctrine3.x - Install  dependencies
         uses: "ramsey/composer-install@v2"
@@ -136,8 +136,8 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "--prefer-dist --no-progress"
           working-directory: "demo/symfony7.x_doctrine3.x"
-        if: ${{ startsWith(matrix.php-version , '8.3') }}
+        if: ${{ matrix.php-version == '8.2' || matrix.php-version == '8.3' }}
 
       - name: Demo symfony7.x Doctrine3.x - Unit Tests
         run: demo/symfony7.x_doctrine3.x/vendor/bin/simple-phpunit -c demo/symfony7.x_doctrine3.x/phpunit.xml.dist
-        if: ${{ startsWith(matrix.php-version , '8.3') }}
+        if: ${{ matrix.php-version == '8.2' || matrix.php-version == '8.3' }}
