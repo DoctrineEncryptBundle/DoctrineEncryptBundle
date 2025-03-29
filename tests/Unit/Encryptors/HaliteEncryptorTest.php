@@ -16,12 +16,12 @@ class HaliteEncryptorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->originalWrapExceptions = DoctrineEncryptExtension::$wrapExceptions;
+        $this->originalWrapExceptions = DoctrineEncryptExtension::wrapExceptions();
     }
 
     protected function tearDown(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = $this->originalWrapExceptions;
+        DoctrineEncryptExtension::wrapExceptions($this->originalWrapExceptions);
     }
 
     public function testEncryptExtension(): void
@@ -42,7 +42,7 @@ class HaliteEncryptorTest extends TestCase
 
     public function testEncryptorThrowsOwnExceptionWhenExceptionsAreNotWrapped(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = false;
+        DoctrineEncryptExtension::wrapExceptions(false);
 
         try {
             (new HaliteEncryptor('not-a-valid-key'))->encrypt('foo');
@@ -56,7 +56,7 @@ class HaliteEncryptorTest extends TestCase
 
     public function testEncryptorThrowsBundleExceptionWhenExceptionsAreWrapped(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = true;
+        DoctrineEncryptExtension::wrapExceptions(true);
 
         try {
             (new HaliteEncryptor('not-a-valid-key'))->encrypt('foo');

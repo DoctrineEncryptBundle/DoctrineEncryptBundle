@@ -15,14 +15,14 @@ doctrine:
                 type: 'annotation'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity/Annotation'
-                prefix: 'App\Entity\Annotation'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony6x\Entity\Annotation'
+                alias: DoctrineEncryptBundle\Demo\Symfony6x
             Attributes:
                 type: 'attribute'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity/Attribute'
-                prefix: 'App\Entity\Attribute'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony6x\Entity\Attribute'
+                alias: DoctrineEncryptBundle\Demo\Symfony6x
 
 when@test:
     doctrine:

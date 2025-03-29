@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace DoctrineEncryptBundle\Demo\Symfony6xOrm3\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
-use App\Repository\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineEncryptBundle\Demo\Symfony6xOrm3\Repository\SecretRepository;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 
 #[ORM\Table(name: 'secrets_using_attributes')]
 #[ORM\Entity(repositoryClass: SecretRepository::class)]

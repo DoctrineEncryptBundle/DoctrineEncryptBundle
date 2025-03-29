@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace DoctrineEncryptBundle\Demo\Symfony7x;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;

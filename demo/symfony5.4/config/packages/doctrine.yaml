@@ -14,8 +14,8 @@ doctrine:
                 type: 'annotation'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity/Annotation'
-                prefix: 'App\Entity\Annotation'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony54\Entity\Annotation'
+                alias: DoctrineEncryptBundle\Demo\Symfony54
 
 when@test:
     doctrine:

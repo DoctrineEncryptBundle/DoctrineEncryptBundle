@@ -37,12 +37,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "DoctrineEncryptBundle\\Demo\\Symfony54\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "DoctrineEncryptBundle\\Demo\\Symfony54\\Tests\\": "tests/"
         }
     },
     "replace": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace DoctrineEncryptBundle\Demo\Symfony54\Entity;
 
 interface SecretInterface
 {

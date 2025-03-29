@@ -35,7 +35,7 @@ class DefuseEncryptor implements EncryptorInterface
         try {
             return \Defuse\Crypto\Crypto::encryptWithPassword($data, $this->secret);
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
+            if (DoctrineEncryptExtension::wrapExceptions()) {
                 throw new UnableToEncryptException($e->getMessage(), $e->getCode(), $e);
             }
             throw $e;
@@ -51,7 +51,7 @@ class DefuseEncryptor implements EncryptorInterface
         try {
             return \Defuse\Crypto\Crypto::decryptWithPassword($data, $this->secret);
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
+            if (DoctrineEncryptExtension::wrapExceptions()) {
                 throw new UnableToDecryptException($e->getMessage(), $e->getCode(), $e);
             }
             throw $e;

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Entity\Annotation;
+namespace DoctrineEncryptBundle\Demo\Symfony6x\Entity\Annotation;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
-use App\Repository\Annotation\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineEncryptBundle\Demo\Symfony6x\Repository\Annotation\SecretRepository;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 
 /**
  * @ORM\Table(name="secrets_using_annotations")
  *
  * @ORM\Entity(repositoryClass=SecretRepository::class)
  */
-class Secret implements \App\Entity\SecretInterface
+class Secret implements \DoctrineEncryptBundle\Demo\Symfony6x\Entity\SecretInterface
 {
     /**
      * @ORM\Id()

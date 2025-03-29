@@ -1,7 +1,7 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
-        appVersion: "6.x"
+        appVersion: "6.x-orm3"
 
 when@test:
     twig:

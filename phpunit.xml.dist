@@ -13,6 +13,16 @@
         <testsuite name="functional">
             <directory suffix="Test.php">./tests/Functional</directory>
         </testsuite>
+        <testsuite name="unit-new">
+            <directory suffix="Test.php">./tests-new/Unit</directory>
+        </testsuite>
+        <testsuite name="functional-new">
+            <directory suffix="Test.php">./tests-new/Functional</directory>
+        </testsuite>
+        <testsuite name="test">
+            <directory suffix="Test.php">./tests-new/Functional/BasicQueryTest</directory>
+            <directory suffix="Test.php">./tests-new/Unit/DependencyInjection</directory>
+        </testsuite>
     </testsuites>
 
     <coverage>
@@ -26,9 +36,7 @@
     </coverage>
 
     <php>
-        <ini name="error_reporting" value="E_ALL ^ E_DEPRECATED" />
-        <env name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
-        <env name="KERNEL_CLASS" value="AppKernel" />
+        <ini name="error_reporting" value="E_ALL" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
 </phpunit>

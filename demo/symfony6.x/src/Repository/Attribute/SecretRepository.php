@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository\Attribute;
+namespace DoctrineEncryptBundle\Demo\Symfony6x\Repository\Attribute;
 
-use App\Entity\Attribute\Secret;
-use App\Repository\AbstractSecretRepository;
+use DoctrineEncryptBundle\Demo\Symfony6x\Entity\Attribute\Secret;
+use DoctrineEncryptBundle\Demo\Symfony6x\Repository\AbstractSecretRepository;
 
 // Alias is needed because of test with both php 7.2, 7.4 and 8.0
 if (!interface_exists('\Doctrine\Common\Persistence\ManagerRegistry')) {

@@ -1,5 +1,5 @@
 controllers:
     resource:
         path: ../src/Controller/
-        namespace: App\Controller
+        namespace: DoctrineEncryptBundle\Demo\Symfony7x\Controller
     type: attribute

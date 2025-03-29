@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Entity\Attribute;
+namespace DoctrineEncryptBundle\Demo\Symfony54\Entity\Attribute;
 
 use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
-use App\Repository\Attribute\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineEncryptBundle\Demo\Symfony54\Repository\Attribute\SecretRepository;
 
 #[ORM\Table(name: 'secrets_using_attributes')]
 #[ORM\Entity(repositoryClass: SecretRepository::class)]
-class Secret implements \App\Entity\SecretInterface
+class Secret implements \DoctrineEncryptBundle\Demo\Symfony54\Entity\SecretInterface
 {
     #[ORM\Id()]
     #[ORM\Column(type: 'string', nullable: false)]

@@ -14,7 +14,8 @@
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
         "symfony/runtime": "6.4.*",
-        "symfony/twig-bundle": "6.4.*"
+        "symfony/twig-bundle": "6.4.*",
+        "symfony/yaml": "6.4.*"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.0",
@@ -34,12 +35,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "DoctrineEncryptBundle\\Demo\\Symfony6xOrm3\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "DoctrineEncryptBundle\\Demo\\Symfony6xOrm3\\Tests\\": "tests/"
         }
     },
     "replace": {

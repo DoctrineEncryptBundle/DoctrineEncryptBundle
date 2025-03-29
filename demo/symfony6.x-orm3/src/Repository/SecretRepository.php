@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace DoctrineEncryptBundle\Demo\Symfony6xOrm3\Repository;
 
-use App\Entity\Secret;
+use DoctrineEncryptBundle\Demo\Symfony6xOrm3\Entity\Secret;
 
 // Alias is needed because of test with both php 7.2, 7.4 and 8.0
 if (!interface_exists('\Doctrine\Common\Persistence\ManagerRegistry')) {

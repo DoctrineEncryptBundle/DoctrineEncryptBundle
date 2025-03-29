@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace DoctrineEncryptBundle\Demo\Symfony6xOrm3\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 

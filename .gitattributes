@@ -2,6 +2,7 @@
 /.github                export-ignore
 /demo                   export-ignore
 /tests                  export-ignore
+/tests-new              export-ignore
 
 /.gitignore             export-ignore
 /.gitattributes         export-ignore

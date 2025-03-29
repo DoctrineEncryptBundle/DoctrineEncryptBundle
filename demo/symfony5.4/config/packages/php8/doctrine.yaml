@@ -5,12 +5,12 @@ doctrine:
                 type: 'annotation'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity/Annotation'
-                prefix: 'App\Entity\Annotation'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony54\Entity\Annotation'
+                alias: DoctrineEncryptBundle\Demo\Symfony54
             Attributes:
                 type: 'attribute'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity/Attribute'
-                prefix: 'App\Entity\Attribute'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony54\Entity\Attribute'
+                alias: DoctrineEncryptBundle\Demo\Symfony54
 

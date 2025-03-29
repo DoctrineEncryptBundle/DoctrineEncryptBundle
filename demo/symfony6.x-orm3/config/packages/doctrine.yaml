@@ -14,8 +14,8 @@ doctrine:
                 type: 'attribute'
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                prefix: 'DoctrineEncryptBundle\Demo\Symfony6xOrm3\Entity'
+                alias: DoctrineEncryptBundle\Demo\Symfony6xOrm3
 
 when@test:
     doctrine:

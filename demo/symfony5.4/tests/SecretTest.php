@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests;
+namespace DoctrineEncryptBundle\Demo\Symfony54\Tests;
 
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
-use App\Entity;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineEncryptBundle\Demo\Symfony54\Entity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SecretTest extends KernelTestCase

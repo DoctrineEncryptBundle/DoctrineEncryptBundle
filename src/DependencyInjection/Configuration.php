@@ -11,18 +11,31 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  * This is the class that validates and merges configuration from your app/config files
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
+ *
+ * @deprecated Use \DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\Configuration instead.
+ *             This class will be removed in 6.0.
  */
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * @var string
+     */
+    private $rootName;
+
+    public function __construct($rootName)
+    {
+        $this->rootName = $rootName;
+    }
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         // Create tree builder
-        $treeBuilder = new TreeBuilder('ambta_doctrine_encrypt');
+        $treeBuilder = new TreeBuilder($this->rootName);
         if (\method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
         } else {
             // BC layer for symfony/config 4.1 and older
-            $rootNode = $treeBuilder->root('ambta_doctrine_encrypt');
+            $rootNode = $treeBuilder->root($this->rootName);
         }
 
         // Grammar of config tree

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace DoctrineEncryptBundle\Demo\Symfony54\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,8 +14,8 @@ class DefaultController extends AbstractController
      * @Route(name="home", path="/")
      */
     public function index(
-        \App\Repository\Annotation\SecretRepository $secretUsingAnnotationRepository,
-        \App\Repository\Attribute\SecretRepository $secretUsingAttributesRepository
+        \DoctrineEncryptBundle\Demo\Symfony54\Repository\Annotation\SecretRepository $secretUsingAnnotationRepository,
+        \DoctrineEncryptBundle\Demo\Symfony54\Repository\Attribute\SecretRepository $secretUsingAttributesRepository
     ): Response {
         $secrets = array_merge(
             $secretUsingAnnotationRepository->findAll(),
@@ -36,9 +36,9 @@ class DefaultController extends AbstractController
 
         $type = $request->query->get('type');
         if ($type === 'annotation') {
-            $secret = new \App\Entity\Annotation\Secret();
+            $secret = new \DoctrineEncryptBundle\Demo\Symfony54\Entity\Annotation\Secret();
         } elseif ($type === 'attribute') {
-            $secret = new \App\Entity\Attribute\Secret();
+            $secret = new \DoctrineEncryptBundle\Demo\Symfony54\Entity\Attribute\Secret();
         } else {
             return new Response('Type is only allowed to be "annotation" or "attribute"');
         }

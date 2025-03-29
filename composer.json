@@ -12,7 +12,6 @@
 		"doctrine/doctrine-bundle": "^2.0.8|^2.1",
 		"symfony/property-access": "^5.4|^6.0|^7.0",
 		"symfony/dependency-injection": "^5.4|^6.0|^7.0",
-		"symfony/yaml": "^5.4|^6.0|^7.0",
 		"symfony/http-kernel": "^5.4|^6.0|^7.0",
 		"symfony/config": "^5.4|^6.0|^7.0",
 		"doctrine/annotations": "^1.13|^2.0",
@@ -27,7 +26,10 @@
 		"jetbrains/phpstorm-attributes": "^1.0",
 		"phpcompatibility/php-compatibility": "^9.3",
 		"symfony/phpunit-bridge": "^7.0",
-		"friendsofphp/php-cs-fixer": "3.64.0"
+		"friendsofphp/php-cs-fixer": "3.64.0",
+		"symfony/yaml": "^5.4|^6.0|^7.0",
+		"rector/rector": "^1.2",
+		"dg/bypass-finals": "^1.9"
 	},
 	"suggest": {
 		"defuse/php-encryption": "Alternative for halite for use with older php-versions",
@@ -36,7 +38,8 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Ambta\\DoctrineEncryptBundle\\": "src/"
+			"Ambta\\DoctrineEncryptBundle\\": "src/",
+			"DoctrineEncryptBundle\\DoctrineEncryptBundle\\": "src-new/"
 		}
 	},
 	"scripts": {
@@ -47,7 +50,8 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/"
+			"Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/",
+			"DoctrineEncryptBundle\\DoctrineEncryptBundle\\Tests\\": "tests-new/"
 		}
 	},
 	"config": {

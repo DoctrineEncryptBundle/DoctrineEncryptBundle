@@ -1,6 +1,6 @@
 <?php
 
-use App\Kernel;
+use DoctrineEncryptBundle\Demo\Symfony6xOrm3\Kernel;
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 

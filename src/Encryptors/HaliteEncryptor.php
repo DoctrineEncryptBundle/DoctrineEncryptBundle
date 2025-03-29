@@ -40,7 +40,7 @@ class HaliteEncryptor implements EncryptorInterface
         try {
             return Crypto::encrypt(new HiddenString($data), $this->getKey());
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
+            if (DoctrineEncryptExtension::wrapExceptions()) {
                 throw new UnableToEncryptException($e->getMessage(), $e->getCode(), $e);
             }
             throw $e;
@@ -58,7 +58,7 @@ class HaliteEncryptor implements EncryptorInterface
         try {
             return Crypto::decrypt($data, $this->getKey())->getString();
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
+            if (DoctrineEncryptExtension::wrapExceptions()) {
                 throw new UnableToDecryptException($e->getMessage(), $e->getCode(), $e);
             }
             throw $e;

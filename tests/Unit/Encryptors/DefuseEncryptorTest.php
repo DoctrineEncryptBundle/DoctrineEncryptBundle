@@ -10,17 +10,18 @@ use PHPUnit\Framework\TestCase;
 class DefuseEncryptorTest extends TestCase
 {
     private const DATA = 'foobar';
+
     /** @var bool */
     private $originalWrapExceptions;
 
     protected function setUp(): void
     {
-        $this->originalWrapExceptions = DoctrineEncryptExtension::$wrapExceptions;
+        $this->originalWrapExceptions = DoctrineEncryptExtension::wrapExceptions();
     }
 
     protected function tearDown(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = $this->originalWrapExceptions;
+        DoctrineEncryptExtension::wrapExceptions($this->originalWrapExceptions);
     }
 
     public function testEncrypt(): void
@@ -40,7 +41,7 @@ class DefuseEncryptorTest extends TestCase
 
     public function testEncryptorThrowsOwnExceptionWhenExceptionsAreNotWrapped(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = false;
+        DoctrineEncryptExtension::wrapExceptions(false);
 
         try {
             (new DefuseEncryptor('not-a-valid-key'))->decrypt('foo');
@@ -54,7 +55,7 @@ class DefuseEncryptorTest extends TestCase
 
     public function testEncryptorThrowsBundleExceptionWhenExceptionsAreWrapped(): void
     {
-        DoctrineEncryptExtension::$wrapExceptions = true;
+        DoctrineEncryptExtension::wrapExceptions(true);
 
         try {
             (new DefuseEncryptor('not-a-valid-key'))->decrypt('foo');

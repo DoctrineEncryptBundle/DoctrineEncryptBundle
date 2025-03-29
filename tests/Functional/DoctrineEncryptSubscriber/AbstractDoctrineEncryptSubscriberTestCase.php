@@ -11,7 +11,6 @@ use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInher
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInheritanceChild;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\DateTimeJsonArrayTarget;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\Owner;
-use DateTime;
 
 abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctionalTestCase
 {

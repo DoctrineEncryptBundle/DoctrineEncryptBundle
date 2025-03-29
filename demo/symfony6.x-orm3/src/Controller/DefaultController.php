@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace DoctrineEncryptBundle\Demo\Symfony6xOrm3\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +13,7 @@ class DefaultController extends AbstractController
     /**
      * @Route(name="home", path="/")
      */
-    public function index(\App\Repository\Attribute\SecretRepository $secretRepository): Response
+    public function index(\DoctrineEncryptBundle\Demo\Symfony6xOrm3\Repository\SecretRepository $secretRepository): Response
     {
         return $this->render('index.html.twig', ['secrets' => $secretRepository->findAll()]);
     }
@@ -27,7 +27,7 @@ class DefaultController extends AbstractController
             return new Response('Please specify name and secret in url-query');
         }
 
-        $secret = new \App\Entity\Secret();
+        $secret = new \DoctrineEncryptBundle\Demo\Symfony6xOrm3\Entity\Secret();
 
         $secret
             ->setName($request->query->getAlnum('name'))

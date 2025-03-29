@@ -2,9 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Factories;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -19,10 +16,17 @@ class SecretFactory
      */
     private $enableSecretCreation;
 
-    public function __construct(string $secretDirectory, bool $enableSecretCreation)
-    {
+    /** @var array<string,string> */
+    private $supportedEncryptors;
+
+    public function __construct(
+        string $secretDirectory,
+        bool $enableSecretCreation,
+        array $supportedEncryptors
+    ) {
         $this->secretDirectory      = $secretDirectory;
         $this->enableSecretCreation = $enableSecretCreation;
+        $this->supportedEncryptors  = $supportedEncryptors;
     }
 
     /**
@@ -34,11 +38,11 @@ class SecretFactory
      */
     public function getSecret(string $className)
     {
-        if (!in_array($className, DoctrineEncryptExtension::SupportedEncryptorClasses)) {
+        if (!in_array($className, $this->supportedEncryptors)) {
             throw new \RuntimeException(sprintf('Class "%s" is not supported by %s', $className, self::class));
         }
 
-        if ($className === HaliteEncryptor::class) {
+        if (str_contains($className, 'HaliteEncryptor')) {
             $filename = '.Halite.key';
         } else {
             $filename = '.Defuse.key';
@@ -77,11 +81,11 @@ class SecretFactory
      */
     private function createSecret(string $secretPath, string $className)
     {
-        if ($className === HaliteEncryptor::class) {
+        if (str_contains($className, 'HaliteEncryptor')) {
             $encryptionKey = KeyFactory::generateEncryptionKey();
             KeyFactory::save($encryptionKey, $secretPath);
             $secret = KeyFactory::export($encryptionKey)->getString();
-        } elseif ($className === DefuseEncryptor::class) {
+        } else {
             $secret = bin2hex(random_bytes(255));
             file_put_contents($secretPath, $secret);
         }

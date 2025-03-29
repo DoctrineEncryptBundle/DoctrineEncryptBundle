@@ -7,6 +7,10 @@ if (!file_exists($file)) {
 
 $autoload = require $file;
 
+// Allowing mocking final classes
+DG\BypassFinals::enable(false, true);
+
+
 if (method_exists(Doctrine\Common\Annotations\AnnotationRegistry::class, 'registerLoader')) {
     Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$autoload, 'loadClass']);
 }

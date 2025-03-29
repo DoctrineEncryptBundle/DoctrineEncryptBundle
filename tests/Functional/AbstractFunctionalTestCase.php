@@ -8,7 +8,6 @@ use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityManager;
@@ -19,6 +18,7 @@ use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
+use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractFunctionalTestCase extends TestCase
 {
@@ -35,10 +35,15 @@ abstract class AbstractFunctionalTestCase extends TestCase
     /** @var DebugDataHolder */
     protected $debugDataHolder;
 
+    /** @var Filesystem */
+    private $filesystem;
+
     abstract protected function getEncryptor(): EncryptorInterface;
 
     public function setUp(): void
     {
+        $this->filesystem = new Filesystem();
+
         if (PHP_VERSION_ID < 80000) {
             $this->setUpPHP7();
         } else {
@@ -86,13 +91,11 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger($this->sqlLoggerStack);
 
         $this->encryptor          = $this->getEncryptor();
-        $annotationCacheDirectory = __DIR__.'/cache';
+        $annotationCacheDirectory = sys_get_temp_dir().'/cache';
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function setUpPHP8(): void
@@ -130,39 +133,27 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $schemaTool->createSchema($classes);
 
         $this->encryptor          = $this->getEncryptor();
-        $annotationCacheDirectory = __DIR__.'/cache';
+        $annotationCacheDirectory = sys_get_temp_dir().'/cache';
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function tearDown(): void
     {
         $this->entityManager->getConnection()->close();
-        unlink($this->dbFile);
+        $this->filesystem->remove($this->dbFile);
     }
 
     protected function createNewCacheDirectory(string $annotationCacheDirectory): void
     {
         $this->recurseRmdir($annotationCacheDirectory);
-        mkdir($annotationCacheDirectory);
+        $this->filesystem->mkdir($annotationCacheDirectory);
     }
 
-    protected function recurseRmdir($dir): bool
+    protected function recurseRmdir($dir): void
     {
-        $contents = scandir($dir);
-        if (is_array($contents)) {
-            $files = array_diff($contents, ['.', '..']);
-            foreach ($files as $file) {
-                (is_dir("$dir/$file") && !is_link("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
-            }
-
-            return rmdir($dir);
-        }
-
-        return false;
+        $this->filesystem->remove($dir);
     }
 
     /**
