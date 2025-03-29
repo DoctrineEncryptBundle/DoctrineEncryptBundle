@@ -100,16 +100,18 @@ Due to the Doctrine Annotations [deprecation](https://www.doctrine-project.org/p
 
 Attributes are faster to read than annotations so it is definitely recommended.
 
-The default to use annotations have been kept the default as most projects are probably still using annotations and have not yet been switched to PHP attributes.
+Depending on PHP, Symfony and Doctrine ORM versions the optimal and supported readers between annotations, annotations and attibutes or just attributes are loaded automatically.
 
 ``` yaml
 services:
     # Skip trying to read annotations. Only read attributes
     ambta_doctrine_encrypt.orm_subscriber:
-        class: Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber
-        arguments: ["@ambta_doctrine_attribute_reader", "@ambta_doctrine_encrypt.encryptor"]
-        tags:
-            -  { name: doctrine.event_subscriber }
+        alias: ambta_doctrine_encrypt.orm_subscriber
+
+    ambta_doctrine_encrypt.encrypt_service:
+        class: Ambta\DoctrineEncryptBundle\Service\Encrypt
+        arguments: ["@ambta_doctrine_encrypt.encryptor"]
+        public: true
 
     ambta_doctrine_encrypt.command.decrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
@@ -118,6 +120,7 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@ambta_doctrine_attribute_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 
     ambta_doctrine_encrypt.command.encrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand
@@ -126,6 +129,7 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@ambta_doctrine_attribute_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 
     ambta_doctrine_encrypt.command.encrypt.status:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand
@@ -134,6 +138,7 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@ambta_doctrine_attribute_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 ```
 
 ## Important!

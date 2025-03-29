@@ -2,19 +2,21 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
+use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use Doctrine\DBAL\Platforms\MySQL80Platform;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Batch encryption for the database.
- *
- * @author Marcel van Nuil <marcel@ambta.com>
- * @author Michael Feinbier <michael@feinbier.net>
  */
 class DoctrineEncryptDatabaseCommand extends AbstractCommand
 {
@@ -30,7 +32,7 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Get entity manager, question helper, subscriber service and annotation reader
+        // Get entity manager, question helper and service
         $question  = $this->getHelper('question');
         $batchSize = $input->getArgument('batchSize');
 
@@ -42,10 +44,10 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
             if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
                 $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
                 $encryptor  = $reflection->newInstance();
-                $this->subscriber->setEncryptor($encryptor);
+                $this->service->setEncryptor($encryptor);
             } else {
                 if (class_exists($input->getArgument('encryptor'))) {
-                    $this->subscriber->setEncryptor($input->getArgument('encryptor'));
+                    $this->service->setEncryptor($input->getArgument('encryptor'));
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
@@ -55,6 +57,10 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
                 }
             }
         }
+
+        $encryptTypes = array_keys(AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES);
+
+        $encryptionableEntityDetails = $this->getEncryptionableEntityDetails();
 
         $defaultAnswer = false;
         $answer        = $input->getOption('answer');
@@ -66,10 +72,9 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         }
 
         // Get entity manager metadata
-        $metaDataArray        = $this->getEncryptionableEntityMetaData();
         $confirmationQuestion = new ConfirmationQuestion(
-            '<question>'.count($metaDataArray).' entities found which are containing properties with the encryption tag.'.PHP_EOL.''.
-            'Which are going to be encrypted with ['.get_class($this->subscriber->getEncryptor()).']. '.PHP_EOL.''.
+            '<question>'.count($encryptionableEntityDetails['metaData']).' entities found which are containing properties with the encryption tag.'.PHP_EOL.''.
+            'Which are going to be encrypted with ['.get_class($this->service->getEncryptor()).']. '.PHP_EOL.''.
             'Wrong settings can mess up your data and it will be unrecoverable. '.PHP_EOL.''.
             'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. '.PHP_EOL.''.
             'Continue with this action? (y/yes)</question>', $defaultAnswer
@@ -79,37 +84,81 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
             return defined('AbstractCommand::FAILURE') ? AbstractCommand::FAILURE : 1;
         }
 
-        // Start decrypting database
+        // Start encrypting database
         $output->writeln(''.PHP_EOL.'Encrypting all fields can take up to several minutes depending on the database size.');
 
-        // Loop through entity manager meta data
-        foreach ($metaDataArray as $metaData) {
-            $i          = 0;
-            $iterator   = $this->getEntityIterator($metaData->name);
-            $totalCount = $this->getTableCount($metaData->name);
+        $platform = new MySQL80Platform();
 
-            $output->writeln(sprintf('Processing <comment>%s</comment>', $metaData->name));
+        $pac        = PropertyAccess::createPropertyAccessor();
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        foreach ($encryptionableEntityDetails['metaData'] as $entityName => $classMeta) {
+            $ctp = $classMeta->changeTrackingPolicy;
+            // Get the current encryptor used
+            $encryptorUsed = $this->subscriber->getEncryptor();
+
+            // Tell the table class to not automatically calculate changed values but just
+            // mark those fields as dirty that get passed to propertyChanged function
+            $classMeta->setChangeTrackingPolicy(ClassMetadataInfo::CHANGETRACKING_NOTIFY);
+            $this->subscriber->setEncryptor(null);
+
+            $i            = 0;
+            $valueCounter = 0;
+            $iterator     = $this->getEntityIterator($entityName);
+            $totalCount   = $this->getTableCount($entityName);
+
+            $output->writeln(sprintf('Processing <comment>%s</comment>\'s records', $entityName));
             $progressBar = new ProgressBar($output, $totalCount);
             foreach ($iterator as $row) {
                 $entity = (is_array($row) ? $row[0] : $row);
-                $this->subscriber->processFields($entity, $this->entityManager);
-                $this->entityManager->persist($entity);
+
+                // tell the unit of work that an value has changed no matter if the value
+                // is actually different from the value already persistent
+                // need all the values checked for the count
+                foreach ($classMeta->fieldMappings as $fieldMapping) {
+                    if (in_array($fieldMapping['type'], $encryptTypes)) {
+                        $value = $pac->getValue($entity, $fieldMapping['fieldName']);
+                        if (!is_null($value)) {
+                            ++$valueCounter;
+                            $unitOfWork->propertyChanged($entity, $fieldMapping['fieldName'], $value, $value);
+                        }
+                    }
+                }
+
+                // Loop through the property's in the entity
+                foreach ($this->getEncryptionableProperties($classMeta) as $property) {
+                    $value = $pac->getValue($entity, $property->getName());
+                    if (!is_null($value)) {
+                        ++$valueCounter;
+
+                        if (substr($value, -strlen($this->service::ENCRYPTION_MARKER)) != $this->service::ENCRYPTION_MARKER) {
+                            $annotation      = $this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted');
+                            $encryptDbalType = Type::getType($annotation->type);
+                            $newValue        = $encryptDbalType->convertToPHPValue($value, $platform);
+                            $usedValue       = $this->service->encrypt($annotation->type, $newValue);
+                            $unitOfWork->propertyChanged($entity, $property->getName(), $value, $usedValue);
+                        }
+                    }
+                }
 
                 if (($i % $batchSize) === 0) {
                     $this->entityManager->flush();
                     $this->entityManager->clear();
-                    $progressBar->advance($batchSize);
                 }
+                $progressBar->advance(1);
                 ++$i;
             }
 
             $progressBar->finish();
             $output->writeln('');
             $this->entityManager->flush();
+            $this->entityManager->clear();
+
+            $classMeta->setChangeTrackingPolicy($ctp);
+            $this->subscriber->setEncryptor($encryptorUsed);
         }
 
         // Say it is finished
-        $output->writeln('Encryption finished. Values encrypted: <info>'.$this->subscriber->encryptCounter.' values</info>.'.PHP_EOL.'All values are now encrypted.');
+        $output->writeln(''.PHP_EOL.'Encryption finished. Estimated values encrypted: <info>'.$valueCounter.'</info>.'.PHP_EOL.'All values are now encrypted.');
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }

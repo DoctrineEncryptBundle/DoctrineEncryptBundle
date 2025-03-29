@@ -30,6 +30,12 @@ class UserV {
     private $totalMoney;
 
     /**
+     * @ORM\Column(type="encrypted", name="total_money")
+     * @var int
+     */
+    private $totalMoneyTypeExample;
+
+    /**
      * @ORM\Column(type="string", length=100, name="first_name")
      * @var string
      */

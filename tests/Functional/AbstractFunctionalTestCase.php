@@ -2,15 +2,18 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional;
 
+use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
+use Ambta\DoctrineEncryptBundle\Service\Encrypt;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
+use Ambta\DoctrineEncryptBundle\Tests\DoctrineCompatibilityTrait;
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -22,8 +25,12 @@ use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 
 abstract class AbstractFunctionalTestCase extends TestCase
 {
+    use DoctrineCompatibilityTrait;
+
     /** @var DoctrineEncryptSubscriber */
     protected $subscriber;
+    /** @var Encrypt */
+    protected $service;
     /** @var EncryptorInterface */
     protected $encryptor;
     /** @var false|string */
@@ -50,6 +57,18 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
     public function setUpPHP7(): void
     {
+        $this->encryptor = $this->getEncryptor();
+        $this->service   = new Encrypt($this->encryptor);
+
+        foreach (AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES_PHP7 as $encyptName => $encryptClass) {
+            if (!Type::hasType($encyptName)) {
+                Type::addType($encyptName, $encryptClass);
+            }
+            /** @var \Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt $addedType */
+            $addedType = Type::getType($encyptName);
+            $addedType->setService($this->service);
+        }
+
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode                 = true;
         $proxyDir                  = null;
@@ -85,7 +104,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $this->sqlLoggerStack = new DebugStack();
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger($this->sqlLoggerStack);
 
-        $this->encryptor          = $this->getEncryptor();
         $annotationCacheDirectory = __DIR__.'/cache';
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
@@ -97,6 +115,18 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
     public function setUpPHP8(): void
     {
+        $this->encryptor = $this->getEncryptor();
+        $this->service   = new Encrypt($this->encryptor);
+
+        foreach (AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES as $encyptName => $encryptClass) {
+            if (!Type::hasType($encyptName)) {
+                Type::addType($encyptName, $encryptClass);
+            }
+            /** @var \Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt $addedType */
+            $addedType = Type::getType($encyptName);
+            $addedType->setService($this->service);
+        }
+
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode = true;
         $proxyDir  = null;
@@ -129,7 +159,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $schemaTool->dropSchema($classes);
         $schemaTool->createSchema($classes);
 
-        $this->encryptor          = $this->getEncryptor();
         $annotationCacheDirectory = __DIR__.'/cache';
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);

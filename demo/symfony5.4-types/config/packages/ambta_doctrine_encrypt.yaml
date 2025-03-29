@@ -1,0 +1,3 @@
+ambta_doctrine_encrypt:
+  enable_secret_generation: false
+  secret: '%env(HALITE_SECRET)%'

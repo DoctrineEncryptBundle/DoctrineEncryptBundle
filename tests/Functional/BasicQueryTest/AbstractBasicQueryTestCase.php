@@ -2,10 +2,15 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
 
+use Ambta\DoctrineEncryptBundle\Service\Encrypt;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\AbstractFunctionalTestCase;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget;
+use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetDateTime;
+use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetStrtoupperWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetWithTypes;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\VehicleCar;
+use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\VehicleCarWithTypes;
 
 abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 {
@@ -20,6 +25,31 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         // Start transaction; insert; commit
         $this->assertEquals('top secret information', $user->getSecret());
         $this->assertEquals(3, $this->getCurrentQueryCount());
+    }
+
+    public function testPersistEntityWithTypes(): void
+    {
+        $user = new CascadeTargetWithTypes();
+        $user->setNotSecret('My public information');
+        $user->setSecret('top secret information');
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(2, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
+
+        // Start transaction; insert; commit
+        $this->assertEquals('top secret information', $user->getSecret());
+
+        $user->setSecret('top secret information');
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(0, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+
+        $user->setSecret('top secret info');
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(1, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
     }
 
     public function testNoUpdateOnReadEncrypted(): void
@@ -56,6 +86,44 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 
         $this->entityManager->rollback();
         $this->assertEquals(4, $this->getCurrentQueryCount());
+    }
+
+    public function testNoUpdateOnReadEncryptedWithType(): void
+    {
+        $this->entityManager->beginTransaction();
+
+        $user = new CascadeTargetWithTypes();
+        $user->setNotSecret('My public information');
+        $user->setSecret('top secret information');
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(2, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
+
+        // Test if no query is executed when doing nothing
+        $this->entityManager->flush();
+
+        // Test if no query is executed when reading unrelated field
+        $user->getNotSecret();
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(0, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
+
+        // Test if no query is executed when reading related field and if field is valid
+        $this->assertEquals('top secret information', $user->getSecret());
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(0, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
+
+        // Test if 1 query is executed when updating entity
+        $user->setSecret('top secret information change');
+        $this->entityManager->persist($user);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(1, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($user)));
+        $this->entityManager->flush();
+        $this->assertEquals('top secret information change', $user->getSecret());
     }
 
     public function testStoredDataIsEncrypted(): void
@@ -104,5 +172,96 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         // Verify there are no queries executed
         $this->assertNull($this->getLatestUpdateQuery());
         $this->assertEquals(0, $this->getCurrentQueryCount());
+    }
+
+    public function testNoUpdateForUnalteredChildrenOfAbstractEntitiesWitTypes()
+    {
+        $car = new VehicleCarWithTypes();
+        $car->setSecret('top secret information');
+        $car->setNotSecret('123-test');
+        $this->entityManager->persist($car);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(3, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($car)));
+        $this->entityManager->flush();
+
+        // Set NotSecret with same data - this does not modify the entity and should not trigger an update
+        $car->setNotSecret('123-test');
+        $this->entityManager->persist($car);
+        $this->entityManager->getUnitOfWork()->computeChangeSets();
+        $this->assertEquals(0, count($this->entityManager->getUnitOfWork()->getEntityChangeSet($car)));
+        $this->entityManager->flush();
+    }
+
+    public function testStoredDataIsEncryptedWithTypes(): void
+    {
+        $user = new CascadeTargetWithTypes();
+        $user->setNotSecret('My public information');
+        $user->setSecret('my secret');
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $stmt       = $connection->prepare('SELECT * from CascadeTargetWithTypes WHERE id = ?');
+        $stmt->bindValue(1, $user->getId());
+        $results      = $this->executeStatementFetchAll($stmt);
+        $passwordData = $results[0]['secret'];
+
+        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringDoesNotContain('my secret', $passwordData);
+        $this->assertEquals('my secret', $user->getSecret());
+
+        $user->setSecret('my secret has changed');
+        $this->entityManager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $stmt       = $connection->prepare('SELECT * from CascadeTargetWithTypes WHERE id = ?');
+        $stmt->bindValue(1, $user->getId());
+        $results      = $this->executeStatementFetchAll($stmt);
+        $passwordData = $results[0]['secret'];
+
+        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringDoesNotContain('my secret has changed', $passwordData);
+        $this->assertEquals('my secret has changed', $user->getSecret());
+    }
+
+    public function testEntitySetterUseStrtoupperWithTypes()
+    {
+        $user = new CascadeTargetStrtoupperWithTypes();
+        $user->setNotSecret('My public information');
+        $user->setSecret('my secret');
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $stmt       = $connection->prepare('SELECT * from CascadeTargetStrtoupperWithTypes WHERE id = ?');
+        $stmt->bindValue(1, $user->getId());
+        $results      = $this->executeStatementFetchAll($stmt);
+        $passwordData = $results[0]['secret'];
+        $secret       = $user->getSecret();
+
+        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringDoesNotContain('my secret', $passwordData);
+        $this->assertStringDoesNotContain('MY SECRET', $passwordData);
+        $this->assertEquals('MY SECRET', $secret);
+    }
+
+    public function testEntityDateTimeWithTypes()
+    {
+        $datetime = new \DateTime();
+        $user     = new CascadeTargetDateTime();
+        $user->setNotSecret('My public information');
+        $user->setSecret($datetime);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $stmt       = $connection->prepare('SELECT * from CascadeTargetDateTime WHERE id = ?');
+        $stmt->bindValue(1, $user->getId());
+        $results      = $this->executeStatementFetchAll($stmt);
+        $passwordData = $results[0]['secret'];
+        $secret       = $user->getSecret();
+
+        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertEquals($datetime->format('Y-m-d H:i:s'), $secret->format('Y-m-d H:i:s'));
     }
 }

@@ -16,24 +16,36 @@
             "Kporras07\\ComposerSymlinks\\ScriptHandler::createSymlinks",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony5.4/.env.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony5.4/.env.test.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony5.4-types/.env.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony5.4-types/.env.test.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x/.env.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x/.env.test.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x-orm3/.env.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x-orm3/.env.test.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x-types/.env.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony6.x-types/.env.test.local",
             "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.local",
-            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.test.local"
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x/.env.test.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x-types/.env.local",
+            "printf 'HALITE_SECRET=\"%s\"' \"$(cat shared/.Halite.key)\" > symfony7.x-types/.env.test.local"
         ]
     },
     "extra": {
         "symlinks": {
-            "shared/templates":         "symfony5.4/templates",
-            "./shared/templates":       "symfony6.x/templates",
-            "././shared/templates":     "symfony6.x-orm3/templates",
-            "./././shared/templates":   "symfony7.x/templates",
-            "shared/var/data.db":       "symfony5.4/var/data.db",
-            "./shared/var/data.db":     "symfony6.x/var/data.db",
-            "././shared/var/data.db":   "symfony6.x-orm3/var/data.db",
-            "./././shared/var/data.db": "symfony7.x/var/data.db"
+            "shared/templates":                "symfony5.4/templates",
+            "./shared/templates":              "symfony5.4-types/templates",
+            "././shared/templates":            "symfony6.x/templates",
+            "./././shared/templates":          "symfony6.x-orm3/templates",
+            "././././shared/templates":        "symfony6.x-types/templates",
+            "./././././shared/templates":      "symfony7.x/templates",
+            "././././././shared/templates":    "symfony7.x-types/templates",
+            "shared/var/data.db":              "symfony5.4/var/data.db",
+            "./shared/var/data.db":            "symfony5.4-types/var/data.db",
+            "././shared/var/data.db":          "symfony6.x/var/data.db",
+            "./././shared/var/data.db":        "symfony6.x-orm3/var/data.db",
+            "././././shared/var/data.db":      "symfony6.x-types/var/data.db",
+            "./././././shared/var/data.db":    "symfony7.x/var/data.db",
+            "././././././shared/var/data.db":  "symfony7.x-types/var/data.db"
         }
     }
 }

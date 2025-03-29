@@ -24,7 +24,6 @@
 		"defuse/php-encryption": "^2.1",
 		"doctrine/cache": "^1.11",
 		"phpstan/phpstan": "^1.4",
-		"jetbrains/phpstorm-attributes": "^1.0",
 		"phpcompatibility/php-compatibility": "^9.3",
 		"symfony/phpunit-bridge": "^7.0",
 		"friendsofphp/php-cs-fixer": "3.64.0"

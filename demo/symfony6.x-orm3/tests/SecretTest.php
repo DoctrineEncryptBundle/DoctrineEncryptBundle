@@ -16,7 +16,7 @@ class SecretTest extends KernelTestCase
         self::bootKernel([]);
     }
 
-    public function secretsAreEncryptedInDatabase()
+    public function testSecretsAreEncryptedInDatabase()
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');

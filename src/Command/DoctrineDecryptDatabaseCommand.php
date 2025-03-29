@@ -2,7 +2,10 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
+use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use Doctrine\DBAL\Platforms\MySQL80Platform;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,12 +13,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Decrypt whole database on tables which are encrypted.
- *
- * @author Marcel van Nuil <marcel@ambta.com>
- * @author Michael Feinbier <michael@feinbier.net>
  */
 class DoctrineDecryptDatabaseCommand extends AbstractCommand
 {
@@ -31,22 +32,22 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Get entity manager, question helper, subscriber service and annotation reader
-        $question = $this->getHelper('question');
+        // Get entity manager, question helper and service
+        $question  = $this->getHelper('question');
+        $batchSize = $input->getArgument('batchSize');
 
         // Get list of supported encryptors
         $supportedExtensions = DoctrineEncryptExtension::SupportedEncryptorClasses;
-        $batchSize           = $input->getArgument('batchSize');
 
         // If encryptor has been set use that encryptor else use default
         if ($input->getArgument('encryptor')) {
             if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
                 $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
                 $encryptor  = $reflection->newInstance();
-                $this->subscriber->setEncryptor($encryptor);
+                $this->service->setEncryptor($encryptor);
             } else {
                 if (class_exists($input->getArgument('encryptor'))) {
-                    $this->subscriber->setEncryptor($input->getArgument('encryptor'));
+                    $this->service->setEncryptor($input->getArgument('encryptor'));
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
@@ -57,19 +58,9 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
             }
         }
 
-        // Get entity manager metadata
-        $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $encryptTypes = array_keys(AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES);
 
-        // Set counter and loop through entity manager meta data
-        $propertyCount = 0;
-        foreach ($metaDataArray as $metaData) {
-            if ($metaData instanceof ClassMetadataInfo and $metaData->isMappedSuperclass) {
-                continue;
-            }
-
-            $countProperties = count($this->getEncryptionableProperties($metaData));
-            $propertyCount += $countProperties;
-        }
+        $encryptionableEntityDetails = $this->getEncryptionableEntityDetails();
 
         $defaultAnswer = false;
         $answer        = $input->getOption('answer');
@@ -81,8 +72,8 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         }
 
         $confirmationQuestion = new ConfirmationQuestion(
-            '<question>'.count($metaDataArray).' entities found which are containing '.$propertyCount.' properties with the encryption tag. '.PHP_EOL.''.
-            'Which are going to be decrypted with ['.get_class($this->subscriber->getEncryptor()).']. '.PHP_EOL.''.
+            '<question>'.count($encryptionableEntityDetails['metaData']).' entities found which are containing properties with the encryption types.'.PHP_EOL.''.
+            'Which are going to be decrypted with ['.get_class($this->service->getEncryptor()).']. '.PHP_EOL.''.
             'Wrong settings can mess up your data and it will be unrecoverable. '.PHP_EOL.''.
             'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. '.PHP_EOL.''.
             'Continue with this action? (y/yes)</question>', $defaultAnswer
@@ -93,44 +84,59 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         }
 
         // Start decrypting database
+        $_ENV['DOCTRINE_SKIP_ENCRYPT'] = true;
         $output->writeln(''.PHP_EOL.'Decrypting all fields. This can take up to several minutes depending on the database size.');
 
-        $valueCounter = 0;
+        $platform = new MySQL80Platform();
 
-        // Loop through entity manager meta data
-        foreach ($this->getEncryptionableEntityMetaData() as $metaData) {
-            $i          = 0;
-            $iterator   = $this->getEntityIterator($metaData->name);
-            $totalCount = $this->getTableCount($metaData->name);
+        $pac        = PropertyAccess::createPropertyAccessor();
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        foreach ($encryptionableEntityDetails['metaData'] as $entityName => $classMeta) {
+            $ctp = $classMeta->changeTrackingPolicy;
+            // Get the current encryptor used
+            $encryptorUsed = $this->subscriber->getEncryptor();
 
-            $output->writeln(sprintf('Processing <comment>%s</comment>', $metaData->name));
+            // Tell the table class to not automatically calculate changed values but just
+            // mark those fields as dirty that get passed to propertyChanged function
+            $classMeta->setChangeTrackingPolicy(ClassMetadataInfo::CHANGETRACKING_NOTIFY);
+            $this->subscriber->setEncryptor(null);
+
+            $i            = 0;
+            $valueCounter = 0;
+            $iterator     = $this->getEntityIterator($entityName);
+            $totalCount   = $this->getTableCount($entityName);
+
+            $output->writeln(sprintf('Processing <comment>%s</comment>\'s records', $entityName));
             $progressBar = new ProgressBar($output, $totalCount);
             foreach ($iterator as $row) {
                 $entity = (is_array($row) ? $row[0] : $row);
 
-                // Create reflectionClass for each entity
-                $entityReflectionClass = new \ReflectionClass($entity);
-
-                // Get the current encryptor used
-                $encryptorUsed = $this->subscriber->getEncryptor();
-
-                // Loop through the property's in the entity
-                foreach ($this->getEncryptionableProperties($metaData) as $property) {
-                    $methodeName = ucfirst($property->getName());
-
-                    $getter = 'get'.$methodeName;
-                    $setter = 'set'.$methodeName;
-
-                    // Check if getter and setter are set
-                    if ($entityReflectionClass->hasMethod($getter) && $entityReflectionClass->hasMethod($setter)) {
-                        $unencrypted = $entity->$getter();
-                        $entity->$setter($unencrypted);
-                        ++$valueCounter;
+                // tell the unit of work that an value has changed no matter if the value
+                // is actually different from the value already persistent
+                // need all the values checked for the count
+                foreach ($classMeta->fieldMappings as $fieldMapping) {
+                    if (in_array($fieldMapping['type'], $encryptTypes)) {
+                        $value = $pac->getValue($entity, $fieldMapping['fieldName']);
+                        if (!is_null($value)) {
+                            ++$valueCounter;
+                            $unitOfWork->propertyChanged($entity, $fieldMapping['fieldName'], $value, $value);
+                        }
                     }
                 }
 
-                $this->subscriber->setEncryptor(null);
-                $this->entityManager->persist($entity);
+                // Loop through the property's in the entity
+                foreach ($this->getEncryptionableProperties($classMeta) as $property) {
+                    $value = $pac->getValue($entity, $property->getName());
+                    if (!is_null($value)) {
+                        ++$valueCounter;
+
+                        $annotation      = $this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted');
+                        $newValue        = $this->service->decrypt($annotation->type, $value);
+                        $encryptDbalType = Type::getType($annotation->type);
+                        $usedValue       = $encryptDbalType->convertToDatabaseValue($newValue, $platform);
+                        $unitOfWork->propertyChanged($entity, $property->getName(), $value, $usedValue);
+                    }
+                }
 
                 if (($i % $batchSize) === 0) {
                     $this->entityManager->flush();
@@ -138,20 +144,18 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                 }
                 $progressBar->advance(1);
                 ++$i;
-
-                $this->subscriber->setEncryptor($encryptorUsed);
             }
 
             $progressBar->finish();
             $output->writeln('');
-            $encryptorUsed = $this->subscriber->getEncryptor();
-            $this->subscriber->setEncryptor(null);
             $this->entityManager->flush();
             $this->entityManager->clear();
+
+            $classMeta->setChangeTrackingPolicy($ctp);
             $this->subscriber->setEncryptor($encryptorUsed);
         }
 
-        $output->writeln(''.PHP_EOL.'Decryption finished values found: <info>'.$valueCounter.'</info>, decrypted: <info>'.$this->subscriber->decryptCounter.'</info>.'.PHP_EOL.'All values are now decrypted.');
+        $output->writeln(''.PHP_EOL.'Decryption finished. Estimated values decrypted: <info>'.$valueCounter.'</info>.'.PHP_EOL.'All values are now decrypted.');
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }
