@@ -1,4 +1,7 @@
 parameters:
+	excludePaths:
+		- src/Types/PHP7/*
+
 	ignoreErrors:
 		-
 			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
@@ -6,14 +9,14 @@ parameters:
 			path: src/Command/AbstractCommand.php
 
 		-
-			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			message: "#Access to constant CHANGETRACKING_NOTIFY on an unknown class#"
 			count: 1
 			path: src/Command/DoctrineDecryptDatabaseCommand.php
 
 		-
-			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			message: "#Access to constant CHANGETRACKING_NOTIFY on an unknown class#"
 			count: 1
-			path: src/Command/DoctrineEncryptStatusCommand.php
+			path: src/Command/DoctrineEncryptDatabaseCommand.php
 
 		-
 			message: "#^Call to an undefined static method Doctrine\\\\ORM\\\\EntityManager\\:\\:create\\(\\)\\.$#"
@@ -29,3 +32,8 @@ parameters:
 			message: "#^Instantiated class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack not found\\.$#"
 			count: 1
 			path: tests/Functional/AbstractFunctionalTestCase.php
+
+		- 
+			message: "#^Variable \\$valueCounter might not be defined\\.$#"
+			count: 2
+			path: src/Command/*
