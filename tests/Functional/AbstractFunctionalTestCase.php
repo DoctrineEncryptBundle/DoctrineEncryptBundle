@@ -266,9 +266,9 @@ abstract class AbstractFunctionalTestCase extends TestCase
      */
     public function assertStringDoesNotContain($needle, $string, $ignoreCase = false, $message = ''): void
     {
-        $this->assertIsString($needle, $message);
-        $this->assertIsString($string, $message);
-        $this->assertIsBool($ignoreCase, $message);
+        static::assertIsString($needle, $message);
+        static::assertIsString($string, $message);
+        static::assertIsBool($ignoreCase, $message);
 
         $constraint = new LogicalNot(new StringContains(
             $needle,

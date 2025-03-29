@@ -33,20 +33,20 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $connection = $em->getConnection();
         $stmt       = $connection->prepare('SELECT * from owner WHERE id = ?');
         $owners     = $em->getRepository(Owner::class)->findAll();
-        $this->assertCount(1, $owners);
+        static::assertCount(1, $owners);
         /** @var Owner $owner */
         $owner = $owners[0];
-        $this->assertEquals($secret, $owner->getSecret());
-        $this->assertEquals($notSecret, $owner->getNotSecret());
+        static::assertEquals($secret, $owner->getSecret());
+        static::assertEquals($notSecret, $owner->getNotSecret());
         $stmt->bindValue(1, $owner->getId());
         $results = $this->executeStatementFetchAll($stmt);
         $this->assertCount(1, $results);
         $result = $results[0];
-        $this->assertEquals($notSecret, $result['notSecret']);
+        static::assertEquals($notSecret, $result['notSecret']);
         $this->assertNotEquals($secret, $result['secret']);
         $this->assertStringEndsWith('<ENC>', $result['secret']);
         $decrypted = $this->encryptor->decrypt(str_replace('<ENC>', '', $result['secret']));
-        $this->assertEquals($secret, $decrypted);
+        static::assertEquals($secret, $decrypted);
     }
 
     public function testEncryptionCascades(): void
@@ -73,17 +73,17 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $this->assertCount(1, $cascadeTargets);
         /** @var CascadeTarget $cascadeTarget */
         $cascadeTarget = $cascadeTargets[0];
-        $this->assertEquals($secret, $cascadeTarget->getSecret());
-        $this->assertEquals($notSecret, $cascadeTarget->getNotSecret());
+        static::assertEquals($secret, $cascadeTarget->getSecret());
+        static::assertEquals($notSecret, $cascadeTarget->getNotSecret());
         $stmt->bindValue(1, $cascadeTarget->getId());
         $results = $this->executeStatementFetchAll($stmt);
         $this->assertCount(1, $results);
         $result = $results[0];
-        $this->assertEquals($notSecret, $result['notSecret']);
+        static::assertEquals($notSecret, $result['notSecret']);
         $this->assertNotEquals($secret, $result['secret']);
         $this->assertStringEndsWith('<ENC>', $result['secret']);
         $decrypted = $this->encryptor->decrypt(str_replace('<ENC>', '', $result['secret']));
-        $this->assertEquals($secret, $decrypted);
+        static::assertEquals($secret, $decrypted);
     }
 
     public function testEncryptionClassTableInheritance(): void
@@ -171,8 +171,8 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $owners = $em->getRepository(Owner::class)->findAll();
         /** @var Owner $owner */
         foreach ($owners as $owner) {
-            $this->assertEquals($secret, $owner->getSecret());
-            $this->assertEquals($notSecret, $owner->getNotSecret());
+            static::assertEquals($secret, $owner->getSecret());
+            static::assertEquals($notSecret, $owner->getNotSecret());
         }
         $this->resetQueryStack();
         $this->assertCount(0, $this->getDebugQueries());
@@ -180,7 +180,7 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $em->flush();
         $afterFlush = $this->subscriber->encryptCounter;
         // No encryption should have happened because we didn't change anything.
-        $this->assertEquals($beforeFlush, $afterFlush);
+        static::assertEquals($beforeFlush, $afterFlush);
         // No queries happened because we didn't change anything.
         $this->assertCount(0, $this->getDebugQueries(), "Unexpected queries:\n".var_export($this->getDebugQueries(), true));
 
@@ -189,7 +189,7 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $em->flush();
         $afterFlush = $this->subscriber->encryptCounter;
         // No encryption should have happened because we didn't change anything.
-        $this->assertEquals($beforeFlush, $afterFlush);
+        static::assertEquals($beforeFlush, $afterFlush);
         // No queries happened because we didn't change anything.
         $this->assertCount(0, $this->getDebugQueries(), "Unexpected queries:\n".var_export($this->getDebugQueries(), true));
 
@@ -199,7 +199,7 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         $result                  = $results[0];
         $shouldBeTheSameAsBefore = $result['secret'];
         $this->assertStringEndsWith('<ENC>', $shouldBeTheSameAsBefore); // is encrypted
-        $this->assertEquals($originalEncryption, $shouldBeTheSameAsBefore);
+        static::assertEquals($originalEncryption, $shouldBeTheSameAsBefore);
     }
 
     public function testEncryptionDoesNotHappenWhenThereIsNoChangeClassInheritance(): void
@@ -332,7 +332,7 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
 
         $this->assertStringEndsWith(DoctrineEncryptSubscriber::ENCRYPTION_MARKER, $passwordData);
         $this->assertStringDoesNotContain('my secret', $passwordData);
-        $this->assertEquals('MY SECRET', $secret);
+        static::assertEquals('MY SECRET', $secret);
     }
 
     public function testEntityWithDateTimeJsonAndArrayProperties()
@@ -361,7 +361,7 @@ abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctio
         // Doctrine datetime type is only for date and time. milliseconds and timezone is not stored.
         // We only test the date and time accordingly
         // https://www.doctrine-project.org/projects/doctrine-dbal/en/3.7/reference/types.html#datetime
-        $this->assertEquals($datetime->format('Y-m-d\\TH:i:s'), $entityDate->format('Y-m-d\\TH:i:s'));
-        $this->assertEquals($jsonArray, $entityJson);
+        static::assertEquals($datetime->format('Y-m-d\\TH:i:s'), $entityDate->format('Y-m-d\\TH:i:s'));
+        static::assertEquals($jsonArray, $entityJson);
     }
 }

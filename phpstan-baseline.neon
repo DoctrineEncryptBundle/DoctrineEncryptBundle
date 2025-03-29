@@ -1,0 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			count: 1
+			path: src/Command/AbstractCommand.php
+
+		-
+			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			count: 1
+			path: src/Command/DoctrineDecryptDatabaseCommand.php
+
+		-
+			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			count: 1
+			path: src/Command/DoctrineEncryptStatusCommand.php
+
+		-
+			message: "#^Call to an undefined static method Doctrine\\\\ORM\\\\EntityManager\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: tests/Functional/AbstractFunctionalTestCase.php
+
+		-
+			message: "#^Call to static method createAnnotationMetadataConfiguration\\(\\) on an unknown class Doctrine\\\\ORM\\\\Tools\\\\Setup\\.$#"
+			count: 1
+			path: tests/Functional/AbstractFunctionalTestCase.php
+
+		-
+			message: "#^Instantiated class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack not found\\.$#"
+			count: 1
+			path: tests/Functional/AbstractFunctionalTestCase.php

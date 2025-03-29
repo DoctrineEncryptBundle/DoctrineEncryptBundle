@@ -18,6 +18,7 @@ use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Doctrine event subscriber which encrypt/decrypt entities.

@@ -7,6 +7,7 @@ use Ambta\DoctrineEncryptBundle\Service\Encrypt;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Command\Command;
 
@@ -92,7 +93,7 @@ abstract class AbstractCommand extends Command
         $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
 
         foreach ($metaDataArray as $entityMetaData) {
-            if ($entityMetaData instanceof ClassMetadataInfo and $entityMetaData->isMappedSuperclass) {
+            if (($entityMetaData instanceof ClassMetadataInfo || $entityMetaData instanceof ClassMetadata) && $entityMetaData->isMappedSuperclass) {
                 continue;
             }
 

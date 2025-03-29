@@ -22,7 +22,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           coverage: "none"
-          php-version: "8.0"
+          php-version: "8.4"
           extensions: pdo, pdo_sqlite
 
       - name: "Validate composer.json"
@@ -36,6 +36,12 @@ jobs:
         with:
             composer-options: "--prefer-stable"
             dependency-versions: 'highest'
+
+      - name: "Trigger install for PHPUnit dependencies"
+        run:  "vendor/bin/simple-phpunit --version"
+
+      - name: "Check declared dependencies"
+        run: "vendor/bin/composer-require-checker check"
 
       - name: "PHPStan"
         run:  "vendor/bin/phpstan analyze"

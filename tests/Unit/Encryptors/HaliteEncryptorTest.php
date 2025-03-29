@@ -27,7 +27,7 @@ class HaliteEncryptorTest extends TestCase
     public function testEncryptExtension(): void
     {
         if (!extension_loaded('sodium') && !class_exists('ParagonIE_Sodium_Compat')) {
-            $this->markTestSkipped('This test only runs when the sodium extension is enabled.');
+            static::markTestSkipped('This test only runs when the sodium extension is enabled.');
         }
         $keyfile = __DIR__.'/fixtures/halite.key';
         $key     = file_get_contents($keyfile);
@@ -37,7 +37,7 @@ class HaliteEncryptorTest extends TestCase
         $this->assertNotSame(self::DATA, $encrypted);
         $decrypted = $halite->decrypt($encrypted);
 
-        $this->assertSame(self::DATA, $decrypted);
+        static::assertSame(self::DATA, $decrypted);
     }
 
     public function testEncryptorThrowsOwnExceptionWhenExceptionsAreNotWrapped(): void

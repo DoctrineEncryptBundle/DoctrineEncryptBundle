@@ -41,7 +41,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         $container = $this->createContainer();
         $this->extension->load([[]], $container);
 
-        $this->assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        static::assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
     }
 
     public function testConfigLoadHalite(): void
@@ -52,7 +52,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $this->assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        static::assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
     }
 
     public function testConfigLoadDefuse(): void
@@ -64,7 +64,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $this->assertSame(DefuseEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        static::assertSame(DefuseEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
     }
 
     public function testConfigLoadCustomEncryptor(): void
@@ -75,7 +75,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $this->assertSame(self::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        static::assertSame(self::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
     }
 
     public function testConfigImpossibleToUseSecretAndSecretDirectoryPath(): void
@@ -99,10 +99,10 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $this->assertIsString($container->getParameter('ambta_doctrine_encrypt.secret'));
+        static::assertIsString($container->getParameter('ambta_doctrine_encrypt.secret'));
         $this->assertStringNotContainsString('Halite', $container->getParameter('ambta_doctrine_encrypt.secret'));
         $this->assertStringNotContainsString('.key', $container->getParameter('ambta_doctrine_encrypt.secret'));
-        $this->assertEquals('my-secret', $container->getParameter('ambta_doctrine_encrypt.secret'));
+        static::assertEquals('my-secret', $container->getParameter('ambta_doctrine_encrypt.secret'));
     }
 
     public function testHaliteSecretIsCreatedWhenSecretFileDoesNotExistAndSecretCreationIsEnabled(): void
@@ -120,9 +120,9 @@ class DoctrineEncryptExtensionTest extends TestCase
         } else {
             $actualSecret = $secretArgument;
         }
-        $this->assertIsString($actualSecret);
+        static::assertIsString($actualSecret);
         $actualSecretOnDisk = file_get_contents($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.Halite.key');
-        $this->assertEquals($actualSecret, $actualSecretOnDisk);
+        static::assertEquals($actualSecret, $actualSecretOnDisk);
 
         try {
             KeyFactory::importEncryptionKey(new HiddenString($actualSecret));
@@ -147,9 +147,9 @@ class DoctrineEncryptExtensionTest extends TestCase
         } else {
             $actualSecret = $secretArgument;
         }
-        $this->assertIsString($actualSecret);
+        static::assertIsString($actualSecret);
         $actualSecretOnDisk = file_get_contents($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.Defuse.key');
-        $this->assertEquals($actualSecret, $actualSecretOnDisk);
+        static::assertEquals($actualSecret, $actualSecretOnDisk);
 
         if (strlen(hex2bin($actualSecret)) !== 255) {
             $this->fail('Generated key is not valid');
@@ -171,7 +171,8 @@ class DoctrineEncryptExtensionTest extends TestCase
         } elseif (method_exists($this, 'expectExceptionMessageRegExp')) {
             $this->expectExceptionMessageRegExp('/DoctrineEncryptBundle: Unable to create secret.*/');
         } else {
-            $this->markAsRisky('Unable to see if the exception matches the actual message');
+            // Unable to see if the exception matches the actual message.
+            $this->markAsRisky();
         }
 
         $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
@@ -199,8 +200,8 @@ class DoctrineEncryptExtensionTest extends TestCase
         } else {
             $actualSecret = $secretArgument;
         }
-        $this->assertIsString($actualSecret);
-        $this->assertEquals($expectedSecret, $actualSecret);
+        static::assertIsString($actualSecret);
+        static::assertEquals($expectedSecret, $actualSecret);
     }
 
     /**

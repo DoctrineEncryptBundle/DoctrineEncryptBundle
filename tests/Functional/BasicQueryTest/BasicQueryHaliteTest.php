@@ -15,7 +15,7 @@ class BasicQueryHaliteTest extends AbstractBasicQueryTestCase
     public function setUp(): void
     {
         if (!extension_loaded('sodium') && !class_exists('ParagonIE_Sodium_Compat')) {
-            $this->markTestSkipped('This test only runs when the sodium extension is enabled.');
+            static::markTestSkipped('This test only runs when the sodium extension is enabled.');
 
             return;
         }

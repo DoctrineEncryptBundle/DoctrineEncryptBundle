@@ -33,9 +33,9 @@ class DefuseEncryptorTest extends TestCase
         $this->assertNotSame(self::DATA, $encrypted);
         $decrypted = $defuse->decrypt($encrypted);
 
-        $this->assertSame(self::DATA, $decrypted);
+        static::assertSame(self::DATA, $decrypted);
         $newkey = file_get_contents($keyfile);
-        $this->assertSame($key, $newkey, 'The key must not be modified');
+        static::assertSame($key, $newkey, 'The key must not be modified');
     }
 
     public function testEncryptorThrowsOwnExceptionWhenExceptionsAreNotWrapped(): void

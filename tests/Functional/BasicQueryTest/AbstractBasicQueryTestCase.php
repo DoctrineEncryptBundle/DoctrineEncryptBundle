@@ -23,8 +23,8 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $this->entityManager->flush();
 
         // Start transaction; insert; commit
-        $this->assertEquals('top secret information', $user->getSecret());
-        $this->assertEquals(3, $this->getCurrentQueryCount());
+        static::assertEquals('top secret information', $user->getSecret());
+        static::assertEquals(3, $this->getCurrentQueryCount());
     }
 
     public function testPersistEntityWithTypes(): void
@@ -55,37 +55,37 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
     public function testNoUpdateOnReadEncrypted(): void
     {
         $this->entityManager->beginTransaction();
-        $this->assertEquals(1, $this->getCurrentQueryCount());
+        static::assertEquals(1, $this->getCurrentQueryCount());
 
         $user = new CascadeTarget();
         $user->setNotSecret('My public information');
         $user->setSecret('top secret information');
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        $this->assertEquals(2, $this->getCurrentQueryCount());
+        static::assertEquals(2, $this->getCurrentQueryCount());
 
         // Test if no query is executed when doing nothing
         $this->entityManager->flush();
-        $this->assertEquals(2, $this->getCurrentQueryCount());
+        static::assertEquals(2, $this->getCurrentQueryCount());
 
         // Test if no query is executed when reading unrelated field
         $user->getNotSecret();
         $this->entityManager->flush();
-        $this->assertEquals(2, $this->getCurrentQueryCount());
+        static::assertEquals(2, $this->getCurrentQueryCount());
 
         // Test if no query is executed when reading related field and if field is valid
-        $this->assertEquals('top secret information', $user->getSecret());
+        static::assertEquals('top secret information', $user->getSecret());
         $this->entityManager->flush();
-        $this->assertEquals(2, $this->getCurrentQueryCount());
+        static::assertEquals(2, $this->getCurrentQueryCount());
 
         // Test if 1 query is executed when updating entity
         $user->setSecret('top secret information change');
         $this->entityManager->flush();
-        $this->assertEquals(3, $this->getCurrentQueryCount());
-        $this->assertEquals('top secret information change', $user->getSecret());
+        static::assertEquals(3, $this->getCurrentQueryCount());
+        static::assertEquals('top secret information change', $user->getSecret());
 
         $this->entityManager->rollback();
-        $this->assertEquals(4, $this->getCurrentQueryCount());
+        static::assertEquals(4, $this->getCurrentQueryCount());
     }
 
     public function testNoUpdateOnReadEncryptedWithType(): void
@@ -160,7 +160,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $this->entityManager->flush();
 
         // start transaction, insert, commit
-        $this->assertEquals(3, $this->getCurrentQueryCount());
+        static::assertEquals(3, $this->getCurrentQueryCount());
 
         // Remove all logged queries
         $this->resetQueryStack();
@@ -171,7 +171,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 
         // Verify there are no queries executed
         $this->assertNull($this->getLatestUpdateQuery());
-        $this->assertEquals(0, $this->getCurrentQueryCount());
+        static::assertEquals(0, $this->getCurrentQueryCount());
     }
 
     public function testNoUpdateForUnalteredChildrenOfAbstractEntitiesWitTypes()

@@ -116,11 +116,11 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $replaceEncryptor = $this->createMock(EncryptorInterface::class);
 
-        $this->assertSame($this->encryptor, $this->subscriber->getEncryptor());
+        static::assertSame($this->encryptor, $this->subscriber->getEncryptor());
         $this->subscriber->setEncryptor($replaceEncryptor);
-        $this->assertSame($replaceEncryptor, $this->subscriber->getEncryptor());
+        static::assertSame($replaceEncryptor, $this->subscriber->getEncryptor());
         $this->subscriber->restoreEncryptor();
-        $this->assertSame($this->encryptor, $this->subscriber->getEncryptor());
+        static::assertSame($this->encryptor, $this->subscriber->getEncryptor());
     }
 
     private function triggerProcessFields(object $entity, bool $encrypt)
@@ -159,7 +159,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
         $this->triggerProcessFields($withUser, true);
 
         $this->assertStringStartsWith('encrypted-', $withUser->name);
-        $this->assertSame('foo', $withUser->foo);
+        static::assertSame('foo', $withUser->foo);
         $this->assertStringStartsWith('encrypted-', $withUser->user->name);
         $this->assertStringStartsWith('encrypted-', $withUser->user->getAddress());
     }
@@ -181,8 +181,8 @@ class DoctrineEncryptSubscriberTest extends TestCase
         $this->subscriber->setEncryptor(null);
         $this->triggerProcessFields($user, true);
 
-        $this->assertSame('David', $user->name);
-        $this->assertSame('Switzerland', $user->getAddress());
+        static::assertSame('David', $user->name);
+        static::assertSame('Switzerland', $user->getAddress());
     }
 
     public function testProcessFieldsDecrypt(): void
@@ -191,8 +191,8 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->triggerProcessFields($user, false);
 
-        $this->assertSame('David', $user->name);
-        $this->assertSame('Switzerland', $user->getAddress());
+        static::assertSame('David', $user->name);
+        static::assertSame('Switzerland', $user->getAddress());
     }
 
     public function testProcessFieldsDecryptExtended(): void
@@ -201,9 +201,9 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->triggerProcessFields($user, false);
 
-        $this->assertSame('David', $user->name);
-        $this->assertSame('Switzerland', $user->getAddress());
-        $this->assertSame('extra', $user->extra);
+        static::assertSame('David', $user->name);
+        static::assertSame('Switzerland', $user->getAddress());
+        static::assertSame('extra', $user->extra);
     }
 
     public function testProcessFieldsDecryptEmbedded(): void
@@ -212,10 +212,10 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->triggerProcessFields($withUser, false);
 
-        $this->assertSame('Thing', $withUser->name);
-        $this->assertSame('foo', $withUser->foo);
-        $this->assertSame('David', $withUser->user->name);
-        $this->assertSame('Switzerland', $withUser->user->getAddress());
+        static::assertSame('Thing', $withUser->name);
+        static::assertSame('foo', $withUser->foo);
+        static::assertSame('David', $withUser->user->name);
+        static::assertSame('Switzerland', $withUser->user->getAddress());
     }
 
     public function testProcessFieldsDecryptNull(): void
@@ -224,7 +224,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->triggerProcessFields($user, false);
 
-        $this->assertSame('David', $user->name);
+        static::assertSame('David', $user->name);
         $this->assertNull($user->getAddress());
     }
 
@@ -235,8 +235,8 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->triggerProcessFields($user, false);
 
-        $this->assertSame('encrypted-David', $user->name);
-        $this->assertSame('encrypted-Switzerland', $user->getAddress());
+        static::assertSame('encrypted-David', $user->name);
+        static::assertSame('encrypted-Switzerland', $user->getAddress());
     }
 
     /**
@@ -314,8 +314,8 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->subscriber->postFlush($postFlush);
 
-        $this->assertSame('David', $user->name);
-        $this->assertSame('Switzerland', $user->getAddress());
+        static::assertSame('David', $user->name);
+        static::assertSame('Switzerland', $user->getAddress());
     }
 
     public function testAnnotationsAreOnlyReadOnce(): void

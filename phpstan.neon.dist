@@ -1,6 +1,9 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
-	level: 0
+	level: 1
 	paths:
 		- src
-		#- tests
+		- tests
 	tmpDir: .phpstan-cache
