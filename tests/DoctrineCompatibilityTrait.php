@@ -87,7 +87,6 @@ trait DoctrineCompatibilityTrait
             if (!Type::hasType($encyptName)) {
                 Type::addType($encyptName, $encryptClass);
             }
-            /** @var \Ambta\DoctrineEncryptBundle\Traits\EncryptServiceAwareTrait $addedType */
             $addedType = Type::getType($encyptName);
             $addedType->setEncryptService($this->encryptService);
             $addedType->setEntityManager($this->entityManager);
@@ -142,16 +141,15 @@ trait DoctrineCompatibilityTrait
         $this->encryptor      = $this->getEncryptor();
         $this->encryptService = new EncryptService();
         $this->encryptService->setEncryptor($this->encryptor);
-        $this->encryptService->setEntitymanager($this->entityManager);
+        $this->encryptService->setEntityManager($this->entityManager);
 
         foreach (EncryptService::ENCRYPT_TYPES as $encyptName => $encryptClass) {
             if (!Type::hasType($encyptName)) {
                 Type::addType($encyptName, $encryptClass);
             }
-            /** @var \Ambta\DoctrineEncryptBundle\Traits\EncryptServiceAwareTrait $addedType */
             $addedType = Type::getType($encyptName);
             $addedType->setEncryptService($this->encryptService);
-            $addedType->setEntitymanager($this->entityManager);
+            $addedType->setEntityManager($this->entityManager);
         }
 
         $schemaTool = new SchemaTool($this->entityManager);

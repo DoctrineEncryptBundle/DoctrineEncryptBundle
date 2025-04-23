@@ -26,7 +26,6 @@ class DoctrineEncryptServiceTest extends TestCase
 
     protected function getEncryptor(): EncryptorInterface|MockObject
     {
-        /** @var EncryptorInterface|MockObject $encryptor */
         $encryptor = $this->createMock(EncryptorInterface::class);
         $encryptor
             ->expects($this->any())

@@ -27,7 +27,6 @@ class AmbtaDoctrineEncryptBundle extends Bundle
         foreach (EncryptService::ENCRYPT_TYPES as $encyptName => $encryptClass) {
             if (!Type::hasType($encyptName)) {
                 Type::addType($encyptName, $encryptClass);
-                /** @var Traits\EncryptServiceAwareTrait $addedType */
                 $addedType = Type::getType($encyptName);
                 $addedType->setEncryptService($encryptService);
                 $addedType->setEntityManager($entityManager);

@@ -101,7 +101,6 @@ final class EncryptService implements EncryptServiceAwareInterface
         $this->skipEncryption();
         foreach (self::ENCRYPT_TYPES as $encyptName => $encryptClass) {
             if (Type::hasType($encyptName)) {
-                /** @var \Ambta\DoctrineEncryptBundle\Traits\EncryptServiceAwareTrait $addedType */
                 $addedType = Type::getType($encyptName);
                 $addedType->getEncryptService()->skipEncryption();
             }

@@ -29,7 +29,7 @@ abstract class AbstractCommand extends Command
     protected $subscriber;
 
     /**
-     * @var Reader|AttributeReader
+     * @var \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader|\Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader
      */
     protected $annotationReader;
 
@@ -41,8 +41,8 @@ abstract class AbstractCommand extends Command
     /**
      * AbstractCommand constructor.
      *
-     * @param EntityManager          $entityManager
-     * @param Reader|AttributeReader $annotationReader
+     * @param EntityManager                                                                                                       $entityManager
+     * @param \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader|\Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader $annotationReader
      *
      * @return void
      */
@@ -89,9 +89,9 @@ abstract class AbstractCommand extends Command
      * encrypted properties per entity which includes 0 counts.
      *
      * @return array{
-     *      array<ClassMetadata>,
-     *      propertyCountPerEntity: array<class-string, int>,
-     *      totalPropertyCount: int,
+     *      metaData: array<class-string<object>, \Doctrine\ORM\Mapping\ClassMetadata>,
+     *      propertyCountPerEntity: array<class-string<object>, int<0, max>>,
+     *      totalPropertyCount: int<0, max>
      * }
      */
     protected function getEncryptionableEntityDetails(): array
