@@ -18,15 +18,10 @@ class Configuration implements ConfigurationInterface
     {
         // Create tree builder
         $treeBuilder = new TreeBuilder('ambta_doctrine_encrypt');
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config 4.1 and older
-            $rootNode = $treeBuilder->root('ambta_doctrine_encrypt');
-        }
 
         // Grammar of config tree
-        $rootNode
+        $treeBuilder
+            ->getRootNode()
             ->beforeNormalization()
                 ->always(function ($v) {
                     if (isset($v['secret']) && isset($v['secret_directory_path'])) {

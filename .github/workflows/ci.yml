@@ -24,9 +24,12 @@ jobs:
           coverage: "none"
           php-version: "8.4"
           extensions: pdo, pdo_sqlite
+          tools: composer:v2, composer-normalize:2
 
       - name: "Validate composer.json"
-        run: "composer validate --strict --no-check-lock"
+        run: |
+          composer validate --strict --no-check-lock
+          composer-normalize --dry-run
 
       - name: "Validate php-files"
         run:  "php -l src && php -l tests"

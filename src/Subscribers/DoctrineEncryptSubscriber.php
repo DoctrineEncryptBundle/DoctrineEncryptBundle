@@ -155,8 +155,14 @@ class DoctrineEncryptSubscriber implements EventSubscriber
      */
     public function preFlush(PreFlushEventArgs $preFlushEventArgs)
     {
-        $objectManager = method_exists($preFlushEventArgs, 'getObjectManager') ? $preFlushEventArgs->getObjectManager() : $preFlushEventArgs->getEntityManager();
-        $unitOfWork    = $objectManager->getUnitOfWork();
+        if (method_exists($preFlushEventArgs, 'getObjectManager')) {
+            $objectManager = $preFlushEventArgs->getObjectManager();
+        } else {
+            \assert(method_exists($preFlushEventArgs, 'getEntityManager'));
+            $objectManager = $preFlushEventArgs->getEntityManager();
+        }
+
+        $unitOfWork = $objectManager->getUnitOfWork();
         foreach ($unitOfWork->getIdentityMap() as $entityName => $entityArray) {
             if (isset($this->cachedDecryptions[$entityName])) {
                 foreach ($entityArray as $entityId => $instance) {
@@ -173,8 +179,14 @@ class DoctrineEncryptSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $onFlushEventArgs)
     {
-        $objectManager = method_exists($onFlushEventArgs, 'getObjectManager') ? $onFlushEventArgs->getObjectManager() : $onFlushEventArgs->getEntityManager();
-        $unitOfWork    = $objectManager->getUnitOfWork();
+        if (method_exists($onFlushEventArgs, 'getObjectManager')) {
+            $objectManager = $onFlushEventArgs->getObjectManager();
+        } else {
+            \assert(method_exists($onFlushEventArgs, 'getEntityManager'));
+            $objectManager = $onFlushEventArgs->getEntityManager();
+        }
+
+        $unitOfWork = $objectManager->getUnitOfWork();
         foreach ([$unitOfWork->getScheduledEntityUpdates(), $unitOfWork->getScheduledEntityInsertions()] as $scheduledEntities) {
             foreach ($scheduledEntities as $entity) {
                 $encryptCounterBefore = $this->encryptCounter;
@@ -193,8 +205,14 @@ class DoctrineEncryptSubscriber implements EventSubscriber
      */
     public function postFlush(PostFlushEventArgs $postFlushEventArgs)
     {
-        $objectManager = method_exists($postFlushEventArgs, 'getObjectManager') ? $postFlushEventArgs->getObjectManager() : $postFlushEventArgs->getEntityManager();
-        $unitOfWork    = $objectManager->getUnitOfWork();
+        if (method_exists($postFlushEventArgs, 'getObjectManager')) {
+            $objectManager = $postFlushEventArgs->getObjectManager();
+        } else {
+            \assert(method_exists($postFlushEventArgs, 'getEntityManager'));
+            $objectManager = $postFlushEventArgs->getEntityManager();
+        }
+
+        $unitOfWork = $objectManager->getUnitOfWork();
         foreach ($unitOfWork->getIdentityMap() as $entityMap) {
             foreach ($entityMap as $entity) {
                 if (method_exists($entity, '__isInitialized') && !$entity->__isInitialized()) {

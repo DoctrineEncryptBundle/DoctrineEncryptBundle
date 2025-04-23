@@ -7,6 +7,7 @@ use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -35,7 +36,8 @@ final class DoctrineEncryptDatabaseCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get entity manager, question helper and service
-        $question  = $this->getHelper('question');
+        $question = $this->getHelper('question');
+        \assert($question instanceof QuestionHelper);
         $batchSize = $input->getArgument('batchSize');
 
         // Get list of supported encryptors
