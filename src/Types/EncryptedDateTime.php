@@ -2,24 +2,24 @@
 
 namespace Ambta\DoctrineEncryptBundle\Types;
 
-use Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt;
+use Ambta\DoctrineEncryptBundle\Traits\EncryptServiceAwareTrait;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
 
-class EncryptedDateTime extends StringType
+final class EncryptedDateTime extends StringType
 {
-    use DoctrineEncrypt;
+    use EncryptServiceAwareTrait;
 
     public const TYPE = 'encrypted_datetime';
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
-        return $this->service->decrypt('datetime', $value);
+        return $this->getEncryptService()->decrypt('datetime', $value);
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
-        return $this->service->encrypt('datetime', $value);
+        return $this->getEncryptService()->encrypt('datetime', $value);
     }
 
     public function getName(): string

@@ -9,7 +9,7 @@ class DoctrineEncryptServiceHaliteTest extends AbstractDoctrineEncryptServiceTes
 {
     protected function getEncryptor(): EncryptorInterface
     {
-        return new HaliteEncryptor(file_get_contents(__DIR__.'/../fixtures/halite.key'));
+        return new HaliteEncryptor(file_get_contents(__DIR__.'/../../fixtures/halite.key'));
     }
 
     public function setUp(): void

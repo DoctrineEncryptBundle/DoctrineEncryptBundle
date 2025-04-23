@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,7 +38,7 @@ class OwnerWithTypes
 
     /**
      * @ORM\OneToOne(
-     *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetWithTypes",
+     *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetWithTypes",
      *     cascade={"persist"})
      */
     #[ORM\OneToOne(targetEntity: CascadeTargetWithTypes::class, cascade: ['persist'])]

@@ -3,16 +3,14 @@
 namespace Ambta\DoctrineEncryptBundle\Tests\Unit\Service;
 
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
-use Ambta\DoctrineEncryptBundle\Service\Encrypt;
+use Ambta\DoctrineEncryptBundle\Service\EncryptService;
+use Ambta\DoctrineEncryptBundle\Tests\DoctrineCompatibilityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineEncryptServiceTest extends TestCase
 {
-    /**
-     * @var Encrypt
-     */
-    private $service;
+    use DoctrineCompatibilityTrait;
 
     protected function createMock($originalClassName): MockObject
     {
@@ -26,7 +24,7 @@ class DoctrineEncryptServiceTest extends TestCase
         return $return;
     }
 
-    protected function setUp(): void
+    protected function getEncryptor(): EncryptorInterface|MockObject
     {
         /** @var EncryptorInterface|MockObject $encryptor */
         $encryptor = $this->createMock(EncryptorInterface::class);
@@ -45,21 +43,21 @@ class DoctrineEncryptServiceTest extends TestCase
             })
         ;
 
-        $this->service = new Encrypt($encryptor);
+        return $encryptor;
     }
 
     public function testEncrypt(): void
     {
         $string = 'Test';
-        $result = $this->service->encrypt('string', $string);
+        $result = $this->encryptService->encrypt('string', $string);
 
-        $this->assertEquals('encrypted-'.$string.Encrypt::ENCRYPTION_MARKER, $result);
+        $this->assertEquals('encrypted-'.$string.EncryptService::ENCRYPTION_MARKER, $result);
     }
 
     public function testDecrypt(): void
     {
-        $string = 'encrypted-Test'.Encrypt::ENCRYPTION_MARKER;
-        $result = $this->service->decrypt('string', $string);
+        $string = 'encrypted-Test'.EncryptService::ENCRYPTION_MARKER;
+        $result = $this->encryptService->decrypt('string', $string);
 
         $this->assertEquals('Test', $result);
     }
@@ -67,17 +65,17 @@ class DoctrineEncryptServiceTest extends TestCase
     public function testEncryptDateTime(): void
     {
         $datetime = new \DateTime();
-        $result   = $this->service->encrypt('datetime', $datetime);
+        $result   = $this->encryptService->encrypt('datetime', $datetime);
 
-        $this->assertEquals('encrypted-'.$datetime->format('Y-m-d H:i:s').Encrypt::ENCRYPTION_MARKER, $result);
+        $this->assertEquals('encrypted-'.$datetime->format('Y-m-d H:i:s').EncryptService::ENCRYPTION_MARKER, $result);
     }
 
     public function testDecryptDateTime(): void
     {
         $datetime  = new \DateTime();
-        $encrypted = $this->service->encrypt('datetime', $datetime);
+        $encrypted = $this->encryptService->encrypt('datetime', $datetime);
 
-        $result = $this->service->decrypt('datetime', $encrypted);
+        $result = $this->encryptService->decrypt('datetime', $encrypted);
 
         $this->assertEquals($datetime->format('Y-m-d H:i:s'), $result->format('Y-m-d H:i:s'));
     }
@@ -86,18 +84,18 @@ class DoctrineEncryptServiceTest extends TestCase
     {
         $json     = '{"test":"value"}';
         $jsonData = json_decode($json, true);
-        $result   = $this->service->encrypt('json', $jsonData);
+        $result   = $this->encryptService->encrypt('json', $jsonData);
 
-        $this->assertEquals('encrypted-'.$json.Encrypt::ENCRYPTION_MARKER, $result);
+        $this->assertEquals('encrypted-'.$json.EncryptService::ENCRYPTION_MARKER, $result);
     }
 
     public function testDecryptJSON(): void
     {
         $json      = '{"test":"value"}';
         $jsonData  = json_decode($json, true);
-        $encrypted = $this->service->encrypt('json', $jsonData);
+        $encrypted = $this->encryptService->encrypt('json', $jsonData);
 
-        $result = $this->service->decrypt('json', $encrypted);
+        $result = $this->encryptService->decrypt('json', $encrypted);
 
         $this->assertEquals($jsonData, $result);
     }
@@ -105,17 +103,17 @@ class DoctrineEncryptServiceTest extends TestCase
     public function testEncryptArray(): void
     {
         $array  = ['test', 'value'];
-        $result = $this->service->encrypt('simple_array', $array);
+        $result = $this->encryptService->encrypt('simple_array', $array);
 
-        $this->assertEquals('encrypted-'.implode(',', $array).Encrypt::ENCRYPTION_MARKER, $result);
+        $this->assertEquals('encrypted-'.implode(',', $array).EncryptService::ENCRYPTION_MARKER, $result);
     }
 
     public function testDecryptArray(): void
     {
         $array     = ['test', 'value'];
-        $encrypted = $this->service->encrypt('simple_array', $array);
+        $encrypted = $this->encryptService->encrypt('simple_array', $array);
 
-        $result = $this->service->decrypt('simple_array', $encrypted);
+        $result = $this->encryptService->decrypt('simple_array', $encrypted);
 
         $this->assertEquals($array, $result);
     }

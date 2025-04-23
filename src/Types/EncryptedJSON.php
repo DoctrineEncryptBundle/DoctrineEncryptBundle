@@ -2,24 +2,24 @@
 
 namespace Ambta\DoctrineEncryptBundle\Types;
 
-use Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt;
+use Ambta\DoctrineEncryptBundle\Traits\EncryptServiceAwareTrait;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
 
-class EncryptedJSON extends TextType
+final class EncryptedJSON extends TextType
 {
-    use DoctrineEncrypt;
+    use EncryptServiceAwareTrait;
 
     public const TYPE = 'encrypted_json';
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
-        return $this->service->decrypt('json', $value);
+        return $this->getEncryptService()->decrypt('json', $value);
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
-        return $this->service->encrypt('json', $value);
+        return $this->getEncryptService()->encrypt('json', $value);
     }
 
     public function getName(): string

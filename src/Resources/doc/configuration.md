@@ -104,21 +104,23 @@ Depending on PHP, Symfony and Doctrine ORM versions the optimal and supported re
 
 ``` yaml
 services:
-    # Skip trying to read annotations. Only read attributes
-    ambta_doctrine_encrypt.orm_subscriber:
+    ambta_doctrine_encrypt.subscriber:
         alias: ambta_doctrine_encrypt.orm_subscriber
 
     ambta_doctrine_encrypt.encrypt_service:
-        class: Ambta\DoctrineEncryptBundle\Service\Encrypt
-        arguments: ["@ambta_doctrine_encrypt.encryptor"]
-        public: true
+        class: Ambta\DoctrineEncryptBundle\Service\EncryptService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@ambta_doctrine_encrypt.encryptor"
+
+    Ambta\DoctrineEncryptBundle\Service\EncryptServiceAwareInterface: '@ambta_doctrine_encrypt.encrypt_service'
 
     ambta_doctrine_encrypt.command.decrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
             - "@ambta_doctrine_encrypt.encrypt_service"
 
@@ -127,7 +129,7 @@ services:
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
             - "@ambta_doctrine_encrypt.encrypt_service"
 
@@ -136,7 +138,7 @@ services:
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
             - "@ambta_doctrine_encrypt.encrypt_service"
 ```

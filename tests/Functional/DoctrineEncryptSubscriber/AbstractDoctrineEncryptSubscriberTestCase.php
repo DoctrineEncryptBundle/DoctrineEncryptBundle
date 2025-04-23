@@ -4,13 +4,13 @@ namespace Ambta\DoctrineEncryptBundle\Tests\Functional\DoctrineEncryptSubscriber
 
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Ambta\DoctrineEncryptBundle\Tests\DoctrineCompatibilityTrait;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTarget;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetStrtoupper;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\ClassTableInheritanceBase;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\ClassTableInheritanceChild;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\DateTimeJsonArrayTarget;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\Owner;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\AbstractFunctionalTestCase;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetStrtoupper;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInheritanceBase;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInheritanceChild;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\DateTimeJsonArrayTarget;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\Owner;
 use DateTime;
 
 abstract class AbstractDoctrineEncryptSubscriberTestCase extends AbstractFunctionalTestCase

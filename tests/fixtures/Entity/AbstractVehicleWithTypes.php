@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,13 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\DiscriminatorColumn(name="type", type="string")
  *
- * @ORM\DiscriminatorMap({"car" = "VehicleCar","bike" = "VehicleBicycle"})
+ * @ORM\DiscriminatorMap({"car" = "VehicleCarWithTypes","bike" = "VehicleBicycleWithTypes"})
  */
 #[ORM\Entity()]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap(['car' => 'VehicleCar', 'bike' => 'VehicleBicycle'])]
-abstract class AbstractVehicle
+#[ORM\DiscriminatorMap(['car' => 'VehicleCarWithTypes', 'bike' => 'VehicleBicycleWithTypes'])]
+abstract class AbstractVehicleWithTypes
 {
     /**
      * @var int
@@ -34,12 +34,9 @@ abstract class AbstractVehicle
     private $id;
 
     /**
-     * @Ambta\DoctrineEncryptBundle\Configuration\Encrypted()
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="encrypted", nullable=true)
      */
-    #[\Ambta\DoctrineEncryptBundle\Configuration\Encrypted]
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'encrypted', nullable: true)]
     private $secret;
 
     /**

@@ -9,6 +9,6 @@ class DoctrineEncryptServiceDefuseTest extends AbstractDoctrineEncryptServiceTes
 {
     protected function getEncryptor(): EncryptorInterface
     {
-        return new DefuseEncryptor(file_get_contents(__DIR__.'/../fixtures/defuse.key'));
+        return new DefuseEncryptor(file_get_contents(__DIR__.'/../../fixtures/defuse.key'));
     }
 }

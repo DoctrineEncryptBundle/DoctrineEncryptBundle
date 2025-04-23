@@ -2,15 +2,15 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
 
-use Ambta\DoctrineEncryptBundle\Service\Encrypt;
+use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTarget;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetDateTime;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetStrtoupperWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\VehicleCar;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\VehicleCarWithTypes;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\AbstractFunctionalTestCase;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetDateTime;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetStrtoupperWithTypes;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetWithTypes;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\VehicleCar;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\VehicleCarWithTypes;
 
 abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 {
@@ -206,7 +206,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $results      = $this->executeStatementFetchAll($stmt);
         $passwordData = $results[0]['secret'];
 
-        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringEndsWith(EncryptService::ENCRYPTION_MARKER, $passwordData);
         $this->assertStringDoesNotContain('my secret', $passwordData);
         $this->assertEquals('my secret', $user->getSecret());
 
@@ -219,7 +219,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $results      = $this->executeStatementFetchAll($stmt);
         $passwordData = $results[0]['secret'];
 
-        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringEndsWith(EncryptService::ENCRYPTION_MARKER, $passwordData);
         $this->assertStringDoesNotContain('my secret has changed', $passwordData);
         $this->assertEquals('my secret has changed', $user->getSecret());
     }
@@ -239,7 +239,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $passwordData = $results[0]['secret'];
         $secret       = $user->getSecret();
 
-        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringEndsWith(EncryptService::ENCRYPTION_MARKER, $passwordData);
         $this->assertStringDoesNotContain('my secret', $passwordData);
         $this->assertStringDoesNotContain('MY SECRET', $passwordData);
         $this->assertEquals('MY SECRET', $secret);
@@ -261,7 +261,7 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
         $passwordData = $results[0]['secret'];
         $secret       = $user->getSecret();
 
-        $this->assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $passwordData);
+        $this->assertStringEndsWith(EncryptService::ENCRYPTION_MARKER, $passwordData);
         $this->assertEquals($datetime->format('Y-m-d H:i:s'), $secret->format('Y-m-d H:i:s'));
     }
 }

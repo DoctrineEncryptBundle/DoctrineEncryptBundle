@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  */
 #[ORM\Entity()]
-class CascadeTargetStrtoupperWithTypes
+class CascadeTargetWithTypes
 {
     /**
      * @var int
@@ -21,7 +21,7 @@ class CascadeTargetStrtoupperWithTypes
      */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue()]
     private $id;
 
     /**
@@ -48,7 +48,7 @@ class CascadeTargetStrtoupperWithTypes
 
     public function setSecret($secret): void
     {
-        $this->secret = strtoupper($secret);
+        $this->secret = $secret;
     }
 
     public function getNotSecret()

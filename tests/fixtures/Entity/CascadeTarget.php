@@ -1,16 +1,15 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
-use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
 #[ORM\Entity]
-class CascadeTargetStrtoupper
+class CascadeTarget
 {
     /**
      * @var int
@@ -53,10 +52,6 @@ class CascadeTargetStrtoupper
 
     public function setSecret($secret): void
     {
-        if (substr($secret, -strlen(DoctrineEncryptSubscriber::ENCRYPTION_MARKER)) != DoctrineEncryptSubscriber::ENCRYPTION_MARKER) {
-            $secret = strtoupper($secret);
-        }
-
         $this->secret = $secret;
     }
 

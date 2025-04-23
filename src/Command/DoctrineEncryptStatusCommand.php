@@ -7,8 +7,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Get status of doctrine encrypt bundle and the database.
+ *
+ * @author Marcel van Nuil <marcel@ambta.com>
+ * @author Michael Feinbier <michael@feinbier.net>
  */
-class DoctrineEncryptStatusCommand extends AbstractCommand
+final class DoctrineEncryptStatusCommand extends AbstractCommand
 {
     protected function configure(): void
     {

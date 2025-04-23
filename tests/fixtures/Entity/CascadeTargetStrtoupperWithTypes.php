@@ -1,6 +1,6 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  */
 #[ORM\Entity()]
-class CascadeTargetDateTime
+class CascadeTargetStrtoupperWithTypes
 {
     /**
      * @var int
@@ -21,13 +21,13 @@ class CascadeTargetDateTime
      */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue()]
+    #[ORM\GeneratedValue]
     private $id;
 
     /**
-     * @ORM\Column(type="encrypted_datetime", nullable=true)
+     * @ORM\Column(type="encrypted", nullable=true)
      */
-    #[ORM\Column(type: 'encrypted_datetime', nullable: true)]
+    #[ORM\Column(type: 'encrypted', nullable: true)]
     private $secret;
 
     /**
@@ -48,7 +48,7 @@ class CascadeTargetDateTime
 
     public function setSecret($secret): void
     {
-        $this->secret = $secret;
+        $this->secret = strtoupper($secret);
     }
 
     public function getNotSecret()

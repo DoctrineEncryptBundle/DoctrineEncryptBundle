@@ -6,7 +6,7 @@
 name: CI
 on:
   push:
-    branches: ['main','master','5.4']
+    branches: ['main','master','5.4','6.0']
   pull_request:
 
 jobs:
@@ -47,7 +47,7 @@ jobs:
         run:  "vendor/bin/phpstan analyze"
 
       - name: "PHPCompatibility"
-        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 7.2-8.4"
+        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 8.1-8.4"
 
       - name: PHP-CS-Fixer
         uses: docker://ghcr.io/php-cs-fixer/php-cs-fixer:3.64-php8.3
@@ -64,16 +64,16 @@ jobs:
       fail-fast: false
       matrix:
         # normal, highest, non-dev installs
-        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        php-version: ['8.1', '8.2', '8.3', '8.4']
         composer-options: ['--prefer-stable']
         dependency-versions: ['highest']
         include:
           # testing lowest PHP version with lowest dependencies
-          - php-version: '7.2.5'
+          - php-version: '8.1'
             dependency-versions: 'lowest'
             composer-options: '--prefer-lowest'
             env:
-              SYMFONY_PHPUNIT_VERSION: 7
+              SYMFONY_PHPUNIT_VERSION: 9
 
     steps:
       - name: "Checkout code"
@@ -90,10 +90,6 @@ jobs:
 #        run: |
 #          composer global require --no-progress --no-scripts --no-plugins symfony/flex >=1.x
 
-      - name: "Remove php-cs-fixer"
-        run: 'composer remove --dev friendsofphp/php-cs-fixer'
-        if: ${{ startsWith(matrix.php-version , '7') }}
-
       - name: "Composer install"
         uses: "ramsey/composer-install@v3"
         with:
@@ -103,7 +99,7 @@ jobs:
       - name: Unit Tests
         run: vendor/bin/simple-phpunit
         env:
-          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '7' || '' }}"
+          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '9' || '' }}"
 
       - name: Install symlinks for demo's
         uses: "ramsey/composer-install@v3"
@@ -122,7 +118,7 @@ jobs:
       - name: Demo symfony5.4 - Unit Tests
         run: demo/symfony5.4/bin/phpunit -c demo/symfony5.4/phpunit.xml.dist
         env:
-          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '7' || '' }}"
+          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '9' || '' }}"
 
       - name: Demo symfony5.4-types - Install  dependencies
         uses: "ramsey/composer-install@v3"
@@ -134,7 +130,7 @@ jobs:
       - name: Demo symfony5.4-types - Unit Tests
         run: demo/symfony5.4-types/bin/phpunit -c demo/symfony5.4-types/phpunit.xml.dist
         env:
-          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '7' || '' }}"
+          SYMFONY_PHPUNIT_VERSION: "${{ matrix.dependency-versions == 'lowest' && '9' || '' }}"
 
       - name: Demo symfony6.x - Install  dependencies
         uses: "ramsey/composer-install@v3"
@@ -142,11 +138,9 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "--prefer-dist --no-progress"
           working-directory: "demo/symfony6.x"
-        if: ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony6.x - Unit Tests
         run: demo/symfony6.x/vendor/bin/simple-phpunit -c demo/symfony6.x/phpunit.xml.dist
-        if: ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony6.x-orm3 - Install  dependencies
         uses: "ramsey/composer-install@v3"
@@ -154,11 +148,9 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options:    "--prefer-dist --no-progress"
           working-directory:   "demo/symfony6.x-orm3"
-        if:   ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony6.x-orm3 - Unit Tests
         run:  demo/symfony6.x/vendor/bin/simple-phpunit -c demo/symfony6.x-orm3/phpunit.xml.dist
-        if:   ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony6.x-types - Install  dependencies
         uses: "ramsey/composer-install@v3"
@@ -166,11 +158,9 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options:    "--prefer-dist --no-progress"
           working-directory:   "demo/symfony6.x-types"
-        if:   ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony6.x-types - Unit Tests
         run:  demo/symfony6.x/vendor/bin/simple-phpunit -c demo/symfony6.x-types/phpunit.xml.dist
-        if:   ${{ startsWith(matrix.php-version , '8.1') || startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') }}
 
       - name: Demo symfony7.x - Install  dependencies
         uses: "ramsey/composer-install@v3"

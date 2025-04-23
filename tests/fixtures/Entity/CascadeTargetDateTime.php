@@ -1,23 +1,14 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- *
- * @ORM\InheritanceType("SINGLE_TABLE")
- *
- * @ORM\DiscriminatorColumn(name="type", type="string")
- *
- * @ORM\DiscriminatorMap({"car" = "VehicleCarWithTypes","bike" = "VehicleBicycleWithTypes"})
  */
 #[ORM\Entity()]
-#[ORM\InheritanceType('SINGLE_TABLE')]
-#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap(['car' => 'VehicleCarWithTypes', 'bike' => 'VehicleBicycleWithTypes'])]
-abstract class AbstractVehicleWithTypes
+class CascadeTargetDateTime
 {
     /**
      * @var int
@@ -30,13 +21,13 @@ abstract class AbstractVehicleWithTypes
      */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue()]
     private $id;
 
     /**
-     * @ORM\Column(type="encrypted", nullable=true)
+     * @ORM\Column(type="encrypted_datetime", nullable=true)
      */
-    #[ORM\Column(type: 'encrypted', nullable: true)]
+    #[ORM\Column(type: 'encrypted_datetime', nullable: true)]
     private $secret;
 
     /**
@@ -65,13 +56,8 @@ abstract class AbstractVehicleWithTypes
         return $this->notSecret;
     }
 
-    /**
-     * @return $this
-     */
-    public function setNotSecret($notSecret): self
+    public function setNotSecret($notSecret): void
     {
         $this->notSecret = $notSecret;
-
-        return $this;
     }
 }

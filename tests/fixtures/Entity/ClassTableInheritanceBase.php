@@ -1,15 +1,21 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
 use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity
+ *
+ * @ORM\InheritanceType("JOINED")
+ *
+ * @ORM\DiscriminatorColumn(name="discr", type="string")
  */
 #[ORM\Entity]
-class CascadeTarget
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
+class ClassTableInheritanceBase
 {
     /**
      * @var int
@@ -32,36 +38,36 @@ class CascadeTarget
      */
     #[Encrypted]
     #[ORM\Column(type: 'string', nullable: true)]
-    private $secret;
+    private $secretBase;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
     #[ORM\Column(type: 'string', nullable: true)]
-    private $notSecret;
+    private $notSecretBase;
 
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getSecret()
+    public function getSecretBase()
     {
-        return $this->secret;
+        return $this->secretBase;
     }
 
-    public function setSecret($secret): void
+    public function setSecretBase($secretBase)
     {
-        $this->secret = $secret;
+        $this->secretBase = $secretBase;
     }
 
-    public function getNotSecret()
+    public function getNotSecretBase()
     {
-        return $this->notSecret;
+        return $this->notSecretBase;
     }
 
-    public function setNotSecret($notSecret): void
+    public function setNotSecretBase($notSecretBase)
     {
-        $this->notSecret = $notSecret;
+        $this->notSecretBase = $notSecretBase;
     }
 }

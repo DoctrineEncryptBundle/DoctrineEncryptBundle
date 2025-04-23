@@ -2,9 +2,9 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
-use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Doctrine\DBAL\Platforms\MySQL80Platform;
+use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -17,8 +17,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Decrypt whole database on tables which are encrypted.
+ *
+ * @author Marcel van Nuil <marcel@ambta.com>
+ * @author Michael Feinbier <michael@feinbier.net>
  */
-class DoctrineDecryptDatabaseCommand extends AbstractCommand
+final class DoctrineDecryptDatabaseCommand extends AbstractCommand
 {
     protected function configure(): void
     {
@@ -44,10 +47,10 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
             if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
                 $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
                 $encryptor  = $reflection->newInstance();
-                $this->service->setEncryptor($encryptor);
+                $this->encryptService->setEncryptor($encryptor);
             } else {
                 if (class_exists($input->getArgument('encryptor'))) {
-                    $this->service->setEncryptor($input->getArgument('encryptor'));
+                    $this->encryptService->setEncryptor($input->getArgument('encryptor'));
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
@@ -58,7 +61,7 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
             }
         }
 
-        $encryptTypes = array_keys(AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES);
+        $encryptTypes = array_keys(EncryptService::ENCRYPT_TYPES);
 
         $encryptionableEntityDetails = $this->getEncryptionableEntityDetails();
 
@@ -73,7 +76,7 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
 
         $confirmationQuestion = new ConfirmationQuestion(
             '<question>'.count($encryptionableEntityDetails['metaData']).' entities found which are containing properties with the encryption types.'.PHP_EOL.''.
-            'Which are going to be decrypted with ['.get_class($this->service->getEncryptor()).']. '.PHP_EOL.''.
+            'Which are going to be decrypted with ['.get_class($this->encryptService->getEncryptor()).']. '.PHP_EOL.''.
             'Wrong settings can mess up your data and it will be unrecoverable. '.PHP_EOL.''.
             'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. '.PHP_EOL.''.
             'Continue with this action? (y/yes)</question>', $defaultAnswer
@@ -84,11 +87,10 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         }
 
         // Start decrypting database
-        $_ENV['DOCTRINE_SKIP_ENCRYPT'] = true;
+        $this->encryptService->skipEncryptionOnTypes();
         $output->writeln(''.PHP_EOL.'Decrypting all fields. This can take up to several minutes depending on the database size.');
 
-        $platform = new MySQL80Platform();
-
+        $platform   = $this->entityManager->getConnection()->getDatabasePlatform();
         $pac        = PropertyAccess::createPropertyAccessor();
         $unitOfWork = $this->entityManager->getUnitOfWork();
         foreach ($encryptionableEntityDetails['metaData'] as $entityName => $classMeta) {
@@ -130,8 +132,8 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                     if (!is_null($value)) {
                         ++$valueCounter;
 
-                        $annotation      = $this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted');
-                        $newValue        = $this->service->decrypt($annotation->type, $value);
+                        $annotation      = $this->annotationReader->getPropertyAnnotation($property, Encrypted::class);
+                        $newValue        = $this->encryptService->decrypt($annotation->type, $value);
                         $encryptDbalType = Type::getType($annotation->type);
                         $usedValue       = $encryptDbalType->convertToDatabaseValue($newValue, $platform);
                         $unitOfWork->propertyChanged($entity, $property->getName(), $value, $usedValue);

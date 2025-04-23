@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use Ambta\DoctrineEncryptBundle\Service\Encrypt;
+use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use App\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -53,7 +53,7 @@ class SecretTest extends KernelTestCase
         self::assertEquals($newSecretObject->getName(), $actualSecretObject->getName());
         // Make sure it is encrypted
         self::assertNotEquals($newSecretObject->getSecret(), $actualRawSecret);
-        self::assertStringEndsWith(Encrypt::ENCRYPTION_MARKER, $actualRawSecret);
+        self::assertStringEndsWith(EncryptService::ENCRYPTION_MARKER, $actualRawSecret);
     }
 
     /**

@@ -251,6 +251,10 @@ class DoctrineEncryptSubscriberTest extends TestCase
             ->method('getScheduledEntityInsertions')
             ->willReturn([$user])
         ;
+        $uow->expects($this->any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([])
+        ;
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')

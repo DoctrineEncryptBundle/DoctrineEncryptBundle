@@ -1,8 +1,7 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
-class ClassTableInheritanceBase
+class ClassTableInheritanceBaseWithTypes
 {
     /**
      * @var int
@@ -32,12 +31,9 @@ class ClassTableInheritanceBase
     private $id;
 
     /**
-     * @Ambta\DoctrineEncryptBundle\Configuration\Encrypted()
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="encrypted", nullable=true)
      */
-    #[Encrypted]
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'encrypted', nullable: true)]
     private $secretBase;
 
     /**

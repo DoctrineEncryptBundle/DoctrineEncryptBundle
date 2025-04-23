@@ -4,21 +4,23 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0.2",
+        "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^2.14",
         "doctrine/orm": "^3.3",
         "doctrineencryptbundle/doctrine-encrypt-bundle": "@dev",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
-        "symfony/flex": "^2",
+        "symfony/flex": "^2.4",
         "symfony/framework-bundle": "6.4.*",
         "symfony/runtime": "6.4.*",
-        "symfony/twig-bundle": "6.4.*"
+        "symfony/twig-bundle": "6.4.*",
+        "twig/twig": "^3.0"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^7.0"
+        "symfony/phpunit-bridge": "^7.2"
     },
     "config": {
         "allow-plugins": {

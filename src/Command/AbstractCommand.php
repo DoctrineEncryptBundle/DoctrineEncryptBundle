@@ -2,8 +2,8 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
-use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
-use Ambta\DoctrineEncryptBundle\Service\Encrypt;
+use Ambta\DoctrineEncryptBundle\Service\EncryptService;
+use Ambta\DoctrineEncryptBundle\Service\EncryptServiceAwareInterface;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +13,8 @@ use Symfony\Component\Console\Command\Command;
 
 /**
  * Base command containing usefull base methods.
+ *
+ * @author Michael Feinbier <michael@feinbier.net>
  **/
 abstract class AbstractCommand extends Command
 {
@@ -32,24 +34,29 @@ abstract class AbstractCommand extends Command
     protected $annotationReader;
 
     /**
-     * @var Encrypt
+     * @var EncryptServiceAwareInterface
      */
-    protected $service;
+    protected $encryptService;
 
     /**
+     * AbstractCommand constructor.
+     *
+     * @param EntityManager          $entityManager
+     * @param Reader|AttributeReader $annotationReader
+     *
      * @return void
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         $annotationReader,
         DoctrineEncryptSubscriber $subscriber,
-        Encrypt $service
+        EncryptServiceAwareInterface $encryptService
     ) {
         parent::__construct();
         $this->entityManager    = $entityManager;
         $this->annotationReader = $annotationReader;
         $this->subscriber       = $subscriber;
-        $this->service          = $service;
+        $this->encryptService   = $encryptService;
     }
 
     /**
@@ -80,6 +87,12 @@ abstract class AbstractCommand extends Command
      * The returned array also contains counts of the total
      * amount of encrypted properties and the count of
      * encrypted properties per entity which includes 0 counts.
+     *
+     * @return array{
+     *      array<ClassMetadata>,
+     *      propertyCountPerEntity: array<class-string, int>,
+     *      totalPropertyCount: int,
+     * }
      */
     protected function getEncryptionableEntityDetails(): array
     {
@@ -89,7 +102,7 @@ abstract class AbstractCommand extends Command
             'totalPropertyCount'     => 0
         ];
 
-        $encryptTypes  = array_keys(AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES);
+        $encryptTypes  = array_keys(EncryptService::ENCRYPT_TYPES);
         $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
 
         foreach ($metaDataArray as $entityMetaData) {

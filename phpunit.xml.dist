@@ -21,7 +21,13 @@
             <directory>./Configuration</directory>
             <directory>./DependencyInjection</directory>
             <directory>./Encryptors</directory>
+            <directory>./Exception</directory>
+            <directory>./Factories</directory>
+            <directory>./Mapping</directory>
+            <directory>./Service</directory>
             <directory>./Subscribers</directory>
+            <directory>./Traits</directory>
+            <directory>./Types</directory>
         </include>
     </coverage>
 

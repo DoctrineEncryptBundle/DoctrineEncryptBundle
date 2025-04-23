@@ -1,21 +1,17 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity */
 #[ORM\Entity]
-class ClassTableInheritanceChild extends ClassTableInheritanceBase
+class ClassTableInheritanceChildWithTypes extends ClassTableInheritanceBaseWithTypes
 {
     /**
-     * @Ambta\DoctrineEncryptBundle\Configuration\Encrypted()
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="encrypted", nullable=true)
      */
-    #[Encrypted]
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'encrypted', nullable: true)]
     private $secretChild;
 
     /**

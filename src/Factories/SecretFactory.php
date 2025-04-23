@@ -6,7 +6,6 @@ use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
-use Symfony\Component\Filesystem\Filesystem;
 
 class SecretFactory
 {

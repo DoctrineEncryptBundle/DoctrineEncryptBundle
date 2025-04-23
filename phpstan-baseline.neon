@@ -1,7 +1,4 @@
 parameters:
-	excludePaths:
-		- src/Types/PHP7/*
-
 	ignoreErrors:
 		-
 			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
@@ -20,18 +17,18 @@ parameters:
 
 		-
 			message: "#^Call to an undefined static method Doctrine\\\\ORM\\\\EntityManager\\:\\:create\\(\\)\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			count: 3
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to static method createAnnotationMetadataConfiguration\\(\\) on an unknown class Doctrine\\\\ORM\\\\Tools\\\\Setup\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			count: 3
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Instantiated class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack not found\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			count: 3
+			path: tests/DoctrineCompatibilityTrait.php
 
 		- 
 			message: "#^Variable \\$valueCounter might not be defined\\.$#"

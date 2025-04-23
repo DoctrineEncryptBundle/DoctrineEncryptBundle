@@ -1,15 +1,23 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
+namespace Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ *
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ *
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ *
+ * @ORM\DiscriminatorMap({"car" = "VehicleCar","bike" = "VehicleBicycle"})
  */
-#[ORM\Entity]
-class Owner
+#[ORM\Entity()]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(['car' => 'VehicleCar', 'bike' => 'VehicleBicycle'])]
+abstract class AbstractVehicle
 {
     /**
      * @var int
@@ -26,11 +34,11 @@ class Owner
     private $id;
 
     /**
-     * @Encrypted
+     * @Ambta\DoctrineEncryptBundle\Configuration\Encrypted()
      *
      * @ORM\Column(type="string", nullable=true)
      */
-    #[Encrypted]
+    #[\Ambta\DoctrineEncryptBundle\Configuration\Encrypted]
     #[ORM\Column(type: 'string', nullable: true)]
     private $secret;
 
@@ -40,15 +48,7 @@ class Owner
     #[ORM\Column(type: 'string', nullable: true)]
     private $notSecret;
 
-    /**
-     * @ORM\OneToOne(
-     *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget",
-     *     cascade={"persist"})
-     */
-    #[ORM\OneToOne(targetEntity: CascadeTarget::class, cascade: ['persist'])]
-    private $cascaded;
-
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -58,7 +58,7 @@ class Owner
         return $this->secret;
     }
 
-    public function setSecret($secret)
+    public function setSecret($secret): void
     {
         $this->secret = $secret;
     }
@@ -68,18 +68,13 @@ class Owner
         return $this->notSecret;
     }
 
-    public function setNotSecret($notSecret)
+    /**
+     * @return $this
+     */
+    public function setNotSecret($notSecret): self
     {
         $this->notSecret = $notSecret;
-    }
 
-    public function getCascaded()
-    {
-        return $this->cascaded;
-    }
-
-    public function setCascaded($cascaded)
-    {
-        $this->cascaded = $cascaded;
+        return $this;
     }
 }

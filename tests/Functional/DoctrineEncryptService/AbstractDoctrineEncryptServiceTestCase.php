@@ -2,11 +2,11 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\DoctrineEncryptService;
 
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\CascadeTargetWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\ClassTableInheritanceBaseWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\ClassTableInheritanceChildWithTypes;
+use Ambta\DoctrineEncryptBundle\Tests\fixtures\Entity\OwnerWithTypes;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\AbstractFunctionalTestCase;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTargetWithTypes;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInheritanceBaseWithTypes;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\ClassTableInheritanceChildWithTypes;
-use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\OwnerWithTypes;
 
 abstract class AbstractDoctrineEncryptServiceTestCase extends AbstractFunctionalTestCase
 {

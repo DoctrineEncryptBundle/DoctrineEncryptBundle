@@ -2,204 +2,21 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional;
 
-use Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle;
-use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
-use Ambta\DoctrineEncryptBundle\Service\Encrypt;
-use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Ambta\DoctrineEncryptBundle\Tests\DoctrineCompatibilityTrait;
-use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Logging\DebugStack;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMSetup;
-use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 
 abstract class AbstractFunctionalTestCase extends TestCase
 {
     use DoctrineCompatibilityTrait;
-
-    /** @var DoctrineEncryptSubscriber */
-    protected $subscriber;
-    /** @var Encrypt */
-    protected $service;
-    /** @var EncryptorInterface */
-    protected $encryptor;
-    /** @var false|string */
-    protected $dbFile;
-    /** @var EntityManager */
-    protected $entityManager;
-    /** @var DebugStack */
-    protected $sqlLoggerStack;
-    /** @var DebugDataHolder */
-    protected $debugDataHolder;
-
-    abstract protected function getEncryptor(): EncryptorInterface;
-
-    public function setUp(): void
-    {
-        if (PHP_VERSION_ID < 80000) {
-            $this->setUpPHP7();
-        } else {
-            $this->setUpPHP8();
-        }
-
-        $this->resetQueryStack();
-    }
-
-    public function setUpPHP7(): void
-    {
-        $this->encryptor = $this->getEncryptor();
-        $this->service   = new Encrypt($this->encryptor);
-
-        foreach (AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES_PHP7 as $encyptName => $encryptClass) {
-            if (!Type::hasType($encyptName)) {
-                Type::addType($encyptName, $encryptClass);
-            }
-            /** @var \Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt $addedType */
-            $addedType = Type::getType($encyptName);
-            $addedType->setService($this->service);
-        }
-
-        // Create a simple "default" Doctrine ORM configuration for Annotations
-        $isDevMode                 = true;
-        $proxyDir                  = null;
-        $cache                     = null;
-        $useSimpleAnnotationReader = false;
-
-        $config = Setup::createAnnotationMetadataConfiguration(
-            [__DIR__.'/fixtures/Entity'],
-            $isDevMode,
-            $proxyDir,
-            $cache,
-            $useSimpleAnnotationReader
-        );
-
-        // database configuration parameters
-        $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $conn         = [
-            'driver' => 'pdo_sqlite',
-            'path'   => $this->dbFile,
-        ];
-
-        // obtaining the entity manager
-        $this->entityManager = EntityManager::create($conn, $config);
-
-        // Using savepoints will be default in dbal 4.0, so use it in 3.0 as well
-        $this->entityManager->getConnection()->setNestTransactionsWithSavepoints(true);
-
-        $schemaTool = new SchemaTool($this->entityManager);
-        $classes    = $this->entityManager->getMetadataFactory()->getAllMetadata();
-        $schemaTool->dropSchema($classes);
-        $schemaTool->createSchema($classes);
-
-        $this->sqlLoggerStack = new DebugStack();
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger($this->sqlLoggerStack);
-
-        $annotationCacheDirectory = __DIR__.'/cache';
-        $this->createNewCacheDirectory($annotationCacheDirectory);
-        $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
-        $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
-        $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
-    }
-
-    public function setUpPHP8(): void
-    {
-        $this->encryptor = $this->getEncryptor();
-        $this->service   = new Encrypt($this->encryptor);
-
-        foreach (AmbtaDoctrineEncryptBundle::ENCRYPT_TYPES as $encyptName => $encryptClass) {
-            if (!Type::hasType($encyptName)) {
-                Type::addType($encyptName, $encryptClass);
-            }
-            /** @var \Ambta\DoctrineEncryptBundle\Traits\DoctrineEncrypt $addedType */
-            $addedType = Type::getType($encyptName);
-            $addedType->setService($this->service);
-        }
-
-        // Create a simple "default" Doctrine ORM configuration for Annotations
-        $isDevMode = true;
-        $proxyDir  = null;
-        $cache     = null;
-
-        $config = ORMSetup::createAttributeMetadataConfiguration(
-            [__DIR__.'/fixtures/Entity'],
-            $isDevMode,
-            $proxyDir,
-            $cache
-        );
-
-        $this->debugDataHolder = new DebugDataHolder();
-
-        $debugMiddleware = new DebugMiddleware($this->debugDataHolder, null);
-        $config->setMiddlewares([$debugMiddleware]);
-
-        // database configuration parameters
-        $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $conn         = [
-            'driver' => 'pdo_sqlite',
-            'path'   => $this->dbFile,
-        ];
-
-        // obtaining the entity manager
-        $this->entityManager = new EntityManager(DriverManager::getConnection($conn, $config), $config);
-
-        $schemaTool = new SchemaTool($this->entityManager);
-        $classes    = $this->entityManager->getMetadataFactory()->getAllMetadata();
-        $schemaTool->dropSchema($classes);
-        $schemaTool->createSchema($classes);
-
-        $annotationCacheDirectory = __DIR__.'/cache';
-        $this->createNewCacheDirectory($annotationCacheDirectory);
-        $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);
-        $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
-    }
-
-    public function tearDown(): void
-    {
-        $this->entityManager->getConnection()->close();
-        unlink($this->dbFile);
-    }
-
-    protected function createNewCacheDirectory(string $annotationCacheDirectory): void
-    {
-        $this->recurseRmdir($annotationCacheDirectory);
-        mkdir($annotationCacheDirectory);
-    }
-
-    protected function recurseRmdir($dir): bool
-    {
-        $contents = scandir($dir);
-        if (is_array($contents)) {
-            $files = array_diff($contents, ['.', '..']);
-            foreach ($files as $file) {
-                (is_dir("$dir/$file") && !is_link("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
-            }
-
-            return rmdir($dir);
-        }
-
-        return false;
-    }
 
     /**
      * Get all queries.
      */
     protected function getAllDebugQueries(): array
     {
-        if (PHP_VERSION_ID < 80000) {
+        if (!\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser(), 'symfony/doctrine-bridge', '>=6.4')) {
             return $this->sqlLoggerStack->queries;
         }
 
@@ -247,15 +64,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
     protected function getCurrentQueryCount(): int
     {
         return count($this->getDebugQueries());
-    }
-
-    protected function resetQueryStack(): void
-    {
-        if (PHP_VERSION_ID < 80000) {
-            $this->sqlLoggerStack->queries = [];
-        } else {
-            $this->debugDataHolder->reset();
-        }
     }
 
     /**

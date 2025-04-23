@@ -17,7 +17,7 @@
         "symfony/yaml": "7.1.*"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^7.1"
+        "symfony/phpunit-bridge": "^7.2"
     },
     "config": {
         "allow-plugins": {

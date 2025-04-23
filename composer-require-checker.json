@@ -2,7 +2,7 @@
     "symbol-whitelist" : [
         "Defuse\\Crypto\\Crypto",
         "Doctrine\\ORM\\Mapping\\ClassMetadataInfo",
-        "JetBrains\\PhpStorm\\Pure",
-        "ParagonIE\\HiddenString\\HiddenString"
+        "ParagonIE\\HiddenString\\HiddenString",
+        "Symfony\\Contracts\\Service\\Attribute\\Required"
     ]
 }
