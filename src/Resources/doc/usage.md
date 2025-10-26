@@ -242,4 +242,4 @@ class User {
 There are some console commands that can help you encrypt your existing database or change encryption methods.
 Read more about the database encryption commands provided with this bundle.
 
-#### [Console commands](src/Resources/doc/commands.md)
+#### [Console commands](/src/Resources/doc/commands.md)

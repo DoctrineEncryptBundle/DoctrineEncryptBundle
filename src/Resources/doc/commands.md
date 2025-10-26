@@ -25,7 +25,7 @@ DoctrineEncrypt\Entity\UserDetail has 13 properties which are encrypted.
 You can use the comment `doctrine:encrypt:database [encryptor]` to encrypt the current database.
 
 * Optional parameter [encryptor]
-    * An encryptor provided by the bundle (Defuse or Halite) or your own [encryption class](src/Resources/doc/custom_encryptor.md).
+    * An encryptor provided by the bundle (Defuse or Halite) or your own [encryption class](/src/Resources/doc/custom_encryptor.md).
     * Default: Your encryptor set in the configuration file or the default encryption class when not set in the configuration file
 * Optional parameter [batchSize]
     * The amount of Entities that are processed before flush is called.
@@ -84,7 +84,7 @@ This command will output the progess and state the all values found are now encr
 You can use the comment `doctrine:decrypt:database [encryptor]` to decrypt the current database.
 
 * Optional parameter [encryptor]
-    * An encryptor provided by the bundle (Defuse or Halite) or your own [encryption class](src/Resources/doc/custom_encryptor.md).
+    * An encryptor provided by the bundle (Defuse or Halite) or your own [encryption class](/src/Resources/doc/custom_encryptor.md).
     * Default: Your encryptor set in the configuration file or the default encryption class when not set in the configuration file
 * Optional parameter [batchSize]
     * The amount of Entities that are processed before flush is called.
@@ -141,4 +141,4 @@ This command will output the progess and state the all values found are now decr
 
 You may want to use your own encryption class learn how here:
 
-#### [Custom encryption class](src/Resources/doc/custom_encryptor.md)
+#### [Custom encryption class](/src/Resources/doc/custom_encryptor.md)

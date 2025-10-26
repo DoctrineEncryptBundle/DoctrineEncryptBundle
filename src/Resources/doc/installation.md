@@ -4,7 +4,7 @@
 2. Enable the database encryption bundle
 3. Configure the database encryption bundle
 
-* [Upgrading](src/Resources/doc/upgrading.md)
+* [Upgrading](/src/Resources/doc/upgrading.md)
 
 ### Requirements
 
@@ -35,4 +35,4 @@ Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle::class => ['all' => true]
 All configuration value's are optional.
 On the following page you can find the configuration information.
 
-#### [Configuration](src/Resources/doc/configuration.md)
+#### [Configuration](/src/Resources/doc/configuration.md)
