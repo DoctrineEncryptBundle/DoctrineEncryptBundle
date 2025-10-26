@@ -24,7 +24,7 @@ jobs:
           coverage: "none"
           php-version: "8.4"
           extensions: pdo, pdo_sqlite
-          tools: composer:v2, composer-normalize:2
+          tools: composer:v2, composer-normalize:2.48.x
 
       - name: "Validate composer.json"
         run: |
