@@ -38,7 +38,7 @@ trait DoctrineCompatibilityTrait
 
     abstract protected function getEncryptor(): EncryptorInterface|MockObject;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         if (\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser(), 'symfony/doctrine-bridge', '>=6.4')) {
             $this->setUpMain();
@@ -49,7 +49,7 @@ trait DoctrineCompatibilityTrait
         $this->resetQueryStack();
     }
 
-    public function setUpLowest(): void
+    protected function setUpLowest(): void
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode                 = true;
@@ -109,7 +109,7 @@ trait DoctrineCompatibilityTrait
         error_reporting(E_ALL);
     }
 
-    public function setUpMain(): void
+    protected function setUpMain(): void
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode = true;
@@ -165,7 +165,7 @@ trait DoctrineCompatibilityTrait
         error_reporting(E_ALL);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->entityManager->getConnection()->close();
         unlink($this->dbFile);
@@ -206,7 +206,7 @@ trait DoctrineCompatibilityTrait
      *
      * Helper-method since methods changed in different supported versions of Doctrine
      */
-    public function executeStatementFetchAll(\Doctrine\DBAL\Statement $statement)
+    protected function executeStatementFetchAll(\Doctrine\DBAL\Statement $statement)
     {
         if (method_exists($statement, 'executeQuery')) {
             return $statement->executeQuery()->fetchAllAssociative();
@@ -222,7 +222,7 @@ trait DoctrineCompatibilityTrait
      *
      * Helper-method since methods changed in different supported versions of Doctrine
      */
-    public function executeStatementFetch(\Doctrine\DBAL\Statement $statement)
+    protected function executeStatementFetch(\Doctrine\DBAL\Statement $statement)
     {
         if (method_exists($statement, 'executeQuery')) {
             return $statement->executeQuery()->fetchAssociative();
