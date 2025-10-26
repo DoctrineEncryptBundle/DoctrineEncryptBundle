@@ -89,7 +89,7 @@ abstract class AbstractCommand extends Command
      * encrypted properties per entity which includes 0 counts.
      *
      * @return array{
-     *      metaData: array<class-string<object>, \Doctrine\ORM\Mapping\ClassMetadata>,
+     *      metaData: array<class-string<object>, ClassMetadata>,
      *      propertyCountPerEntity: array<class-string<object>, int<0, max>>,
      *      totalPropertyCount: int<0, max>
      * }

@@ -9,4 +9,5 @@ The following documents are available:
 * [Configuration](/src/Resources/doc/configuration.md)
 * [Usage](/src/Resources/doc/usage.md)
 * [Console commands](/src/Resources/doc/commands.md)
+* [Upgrading](/src/Resources/doc/upgrading.md)
 * [Custom encryptor class](/src/Resources/doc/custom_encryptor.md)

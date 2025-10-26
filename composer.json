@@ -1,7 +1,8 @@
 {
     "name": "doctrineencryptbundle/doctrine-encrypt-bundle",
-    "type": "library",
     "description": "Encrypted symfony entity's by verified and standardized libraries",
+    "license": "MIT",
+    "type": "library",
     "keywords": [
         "doctrine",
         "symfony",
@@ -10,7 +11,6 @@
         "encrypt",
         "decrypt"
     ],
-    "license": "MIT",
     "require": {
         "php": ">=8.1",
         "composer-runtime-api": "^2.0",
@@ -35,7 +35,7 @@
     "require-dev": {
         "defuse/php-encryption": "^2.1",
         "doctrine/cache": "^1.11",
-        "ergebnis/composer-normalize": "^2.19",
+        "ergebnis/composer-normalize": "^2.48",
         "friendsofphp/php-cs-fixer": "^3.64.0",
         "maglnet/composer-require-checker": "^2.1 || ^3.8 || ^4.14",
         "phpcompatibility/php-compatibility": "^9.3.5",
@@ -48,12 +48,6 @@
         "defuse/php-encryption": "Alternative for halite for use with older php-versions",
         "paragonie/sodium_compat": "Alternative for ext-sodium for use with older php-versions"
     },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "ergebnis/composer-normalize": true
-        }
-    },
     "autoload": {
         "psr-4": {
             "Ambta\\DoctrineEncryptBundle\\": "src/"
@@ -62,6 +56,12 @@
     "autoload-dev": {
         "psr-4": {
             "Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ergebnis/composer-normalize": true
         }
     },
     "scripts": {
