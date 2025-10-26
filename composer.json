@@ -1,8 +1,7 @@
 {
     "name": "doctrineencryptbundle/doctrine-encrypt-bundle",
-    "description": "Encrypted symfony entity's by verified and standardized libraries",
-    "license": "MIT",
     "type": "library",
+    "description": "Encrypted symfony entity's by verified and standardized libraries",
     "keywords": [
         "doctrine",
         "symfony",
@@ -11,6 +10,7 @@
         "encrypt",
         "decrypt"
     ],
+    "license": "MIT",
     "require": {
         "php": ">=8.1",
         "composer-runtime-api": "^2.0",
@@ -48,6 +48,12 @@
         "defuse/php-encryption": "Alternative for halite for use with older php-versions",
         "paragonie/sodium_compat": "Alternative for ext-sodium for use with older php-versions"
     },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ergebnis/composer-normalize": true
+        }
+    },
     "autoload": {
         "psr-4": {
             "Ambta\\DoctrineEncryptBundle\\": "src/"
@@ -56,12 +62,6 @@
     "autoload-dev": {
         "psr-4": {
             "Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "ergebnis/composer-normalize": true
         }
     },
     "scripts": {
