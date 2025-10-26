@@ -2,7 +2,7 @@
 
 ### Column Type
 
-Column type is suggested to use the bundles supported encryption types.  All supported types automatically linked to either the string or test database type.
+Using column types is suggested to use the bundles supported encryption types.  All supported types automatically linked to either the string or text database type.
 
 Supported types:
 
@@ -242,4 +242,4 @@ class User {
 There are some console commands that can help you encrypt your existing database or change encryption methods.
 Read more about the database encryption commands provided with this bundle.
 
-#### [Console commands](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/commands.md)
+#### [Console commands](src/Resources/doc/commands.md)

@@ -2,8 +2,12 @@
 
 All available configuration options are listed below.
 
+By default there is no configuration file created. 
+
+To make changes to the default configuration values you will need to create the yaml file config/packages/ambta_doctrine_encrypt.yaml
+
 * **encryptor_class** - Custom class for encrypting data
-    * Encryptor class, [your own encryptor class](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/custom_encryptor.md) will override encryptor paramater
+    * Encryptor class, [your own encryptor class](src/Resources/doc/custom_encryptor.md) will override encryptor paramater
     * Encryptor must implement the Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface interface
     * Default: Halite
 * **secret_directory_path** - Path to where the key file is stored
@@ -152,4 +156,4 @@ composer require "defuse/php-encryption ^2.0"
 ## Usage
 
 Read how to use the database encryption bundle in your project.
-#### [Usage](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/usage.md)
+#### [Usage](src/Resources/doc/usage.md)

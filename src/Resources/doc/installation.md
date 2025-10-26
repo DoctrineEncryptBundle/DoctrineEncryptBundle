@@ -4,46 +4,30 @@
 2. Enable the database encryption bundle
 3. Configure the database encryption bundle
 
+* [Upgrading](src/Resources/doc/upgrading.md)
+
 ### Requirements
 
- - PHP ^7.2 | ^8.0
- - Comes with package: [paragonie/sodium_compat](https://github.com/paragonie/sodium_compat) ^1.5
- - Comes with package: [Halite](https://github.com/paragonie/halite) ^3.0
- - [doctrine/orm](https://packagist.org/packages/doctrine/orm) >= 2.0
- - [symfony/framework-bundle](https://packagist.org/packages/symfony/framework-bundle) >= 2.0
+ - PHP ^8.1
+ - Comes with package: [Halite](https://github.com/paragonie/halite) ^4.6 || ^5.0
+ - [doctrine/orm](https://packagist.org/packages/doctrine/orm) ^2.12 || ^3.3
 
 ### Step 1: Download DoctrineEncryptBundle using composer
 
 DoctrineEncryptBundle should be installed using [Composer](http://getcomposer.org/):
 
 ``` js
-{
-    "require": {
-        "doctrineencryptbundle/doctrine-encrypt-bundle": "5.3.*"
-    }
-}
+php composer.phar require "doctrineencryptbundle/doctrine-encrypt-bundle:^6.0"
 ```
 
-Now tell composer to download the bundle by running the command:
-
-``` bash
-$ php composer.phar update doctrineencryptbundle/doctrine-encrypt-bundle
-```
-
-Composer will install the bundle to your project's `vendor/ambta` directory.
+Composer will install the bundle to your project's `vendor/doctrineencryptbundle` directory.
 
 ### Step 2: Enable the bundle
 
-Enable the bundle in the Symfony2 kernel by adding it in your /app/AppKernel.php file:
+Enable the bundle manually, if not using Symfony flex, in Symfony by adding it in your config/bundles.php file's return statement:
 
 ``` php
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle(),
-    );
-}
+Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle::class => ['all' => true]
 ```
 
 ### Step 3: Set your configuration
@@ -51,4 +35,4 @@ public function registerBundles()
 All configuration value's are optional.
 On the following page you can find the configuration information.
 
-#### [Configuration](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/configuration.md)
+#### [Configuration](src/Resources/doc/configuration.md)

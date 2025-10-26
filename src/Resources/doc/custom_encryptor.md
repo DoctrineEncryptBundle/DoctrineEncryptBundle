@@ -4,4 +4,4 @@ We can imagine that you want to use your own encryption class, and while that se
 
 That being said, you can add custom Encryptor classes to Ambta/DoctrineEncryptBundle/Encryptors to implement your own favorite library.
 
-#### [Back to index](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/index.md)
+#### [Back to index](src/Resources/doc/index.md)

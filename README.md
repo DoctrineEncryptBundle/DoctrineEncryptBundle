@@ -44,8 +44,6 @@ ambta_doctrine_encrypt:
     encryptor_class: Defuse
 ```
 
-
-
 ### Secret key
 
 The secret key should be a max 32 byte hexadecimal string (`[0-9a-fA-F]`).
@@ -69,9 +67,10 @@ Filename example: `.DefuseEncryptor.key` or `.HaliteEncryptor.key`
 * [Configuration](src/Resources/doc/configuration.md)
 * [Usage](src/Resources/doc/usage.md)
 * [Console commands](src/Resources/doc/commands.md)
+* [Upgrading](src/Resources/doc/upgrading.md)
 * [Custom encryption class](src/Resources/doc/custom_encryptor.md)
 
 ### Demo
 
-Two demo-installations, one using symfony 4.4 and one using symfony 6.x, can be found in this repository in [`demo`](demo).  This demonstrates how to use
-the application using both annotations and, when using php > 8.0, attributes.
+Demo-installations can be found in this repository within the [`demo`](demo) directory.  These demonstrates how to use
+the various supported encryption and decryption implementations.
