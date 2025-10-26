@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Exception\UnableToDecryptException;
 use Ambta\DoctrineEncryptBundle\Exception\UnableToEncryptException;
 
@@ -35,10 +34,7 @@ class DefuseEncryptor implements EncryptorInterface
         try {
             return \Defuse\Crypto\Crypto::encryptWithPassword($data, $this->secret);
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
-                throw new UnableToEncryptException($e->getMessage(), $e->getCode(), $e);
-            }
-            throw $e;
+            throw new UnableToEncryptException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -51,10 +47,7 @@ class DefuseEncryptor implements EncryptorInterface
         try {
             return \Defuse\Crypto\Crypto::decryptWithPassword($data, $this->secret);
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
-                throw new UnableToDecryptException($e->getMessage(), $e->getCode(), $e);
-            }
-            throw $e;
+            throw new UnableToDecryptException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }

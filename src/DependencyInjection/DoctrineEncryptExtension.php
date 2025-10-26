@@ -19,13 +19,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class DoctrineEncryptExtension extends Extension
 {
-    /**
-     * Flag to test if we should wrap exceptions by our own exceptions.
-     *
-     * @internal
-     */
-    public static $wrapExceptions = false;
-
     public const SupportedEncryptorClasses = [
         'Defuse' => DefuseEncryptor::class,
         'Halite' => HaliteEncryptor::class,
@@ -81,20 +74,6 @@ class DoctrineEncryptExtension extends Extension
         // Symfony 7 (only attributes)
         } else {
             $loader->load('service_listeners_with_attributes.yml');
-        }
-
-        // Wrap exceptions
-        if ($config['wrap_exceptions']) {
-            self::$wrapExceptions = true;
-        } else {
-            trigger_deprecation(
-                'doctrineencryptbundle/doctrine-encrypt-bundle',
-                '5.4.2',
-                <<<'EOF'
-Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
-You can start using these exceptions today by setting 'ambta_doctrine_encrypt.wrap_exceptions' to TRUE.
-EOF
-            );
         }
     }
 

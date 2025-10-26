@@ -2,7 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Subscribers;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
@@ -329,10 +328,7 @@ class DoctrineEncryptSubscriber implements EventSubscriber
         } catch (DoctrineEncryptBundleException $e) {
             throw $e;
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
-                throw new DoctrineEncryptBundleException('Something went wrong encrypting/decrypting a secret', 0, $e);
-            }
-            throw $e;
+            throw new DoctrineEncryptBundleException('Something went wrong encrypting/decrypting a secret', 0, $e);
         }
 
         return $entity;

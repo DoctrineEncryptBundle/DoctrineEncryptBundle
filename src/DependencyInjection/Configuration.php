@@ -44,9 +44,6 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('secret')
                     ->defaultValue(null)
                 ->end()
-                ->scalarNode('wrap_exceptions')
-                    ->defaultFalse()
-                ->end()
             ->end();
 
         return $treeBuilder;
