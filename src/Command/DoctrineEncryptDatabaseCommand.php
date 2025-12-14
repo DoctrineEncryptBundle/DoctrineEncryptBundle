@@ -5,7 +5,6 @@ namespace Ambta\DoctrineEncryptBundle\Command;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -89,19 +88,18 @@ final class DoctrineEncryptDatabaseCommand extends AbstractCommand
         }
 
         // Start encrypting database
+        $this->encryptService->enableEncryptionOnTypes();
         $output->writeln(''.PHP_EOL.'Encrypting all fields can take up to several minutes depending on the database size.');
 
         $platform   = $this->entityManager->getConnection()->getDatabasePlatform();
         $pac        = PropertyAccess::createPropertyAccessor();
         $unitOfWork = $this->entityManager->getUnitOfWork();
         foreach ($encryptionableEntityDetails['metaData'] as $entityName => $classMeta) {
-            $ctp = $classMeta->changeTrackingPolicy;
             // Get the current encryptor used
             $encryptorUsed = $this->subscriber->getEncryptor();
 
             // Tell the table class to not automatically calculate changed values but just
             // mark those fields as dirty that get passed to propertyChanged function
-            $classMeta->setChangeTrackingPolicy(ClassMetadataInfo::CHANGETRACKING_NOTIFY);
             $this->subscriber->setEncryptor(null);
 
             $i            = 0;
@@ -143,6 +141,8 @@ final class DoctrineEncryptDatabaseCommand extends AbstractCommand
                     }
                 }
 
+                $unitOfWork->scheduleForUpdate($entity);
+
                 if (($i % $batchSize) === 0) {
                     $this->entityManager->flush();
                     $this->entityManager->clear();
@@ -156,7 +156,6 @@ final class DoctrineEncryptDatabaseCommand extends AbstractCommand
             $this->entityManager->flush();
             $this->entityManager->clear();
 
-            $classMeta->setChangeTrackingPolicy($ctp);
             $this->subscriber->setEncryptor($encryptorUsed);
         }
 

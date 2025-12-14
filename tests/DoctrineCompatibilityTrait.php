@@ -123,6 +123,10 @@ trait DoctrineCompatibilityTrait
             $cache
         );
 
+        if (PHP_VERSION_ID >= 80400) {
+            $config->enableNativeLazyObjects(true);
+        }
+
         $this->debugDataHolder = new DebugDataHolder();
 
         $debugMiddleware = new DebugMiddleware($this->debugDataHolder, null);

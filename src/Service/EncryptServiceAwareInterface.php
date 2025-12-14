@@ -38,6 +38,16 @@ interface EncryptServiceAwareInterface
     public function skipEncryptionOnTypes();
 
     /**
+     * Used for the encrypt command so that the values in the database can actually be encrypted.
+     */
+    public function enableEncryption();
+
+    /**
+     * Used for the encrypt command so that the values in the database can actually be encrypted.
+     */
+    public function enableEncryptionOnTypes();
+
+    /**
      * Process encrypt.
      *
      * @param 'string'|'datetime'|'json'|'array' $type
