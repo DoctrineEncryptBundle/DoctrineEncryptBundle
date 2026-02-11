@@ -108,6 +108,28 @@ final class EncryptService implements EncryptServiceAwareInterface
     }
 
     /**
+     * Used for the encrypt command so that the values in the database can actually be encrypted.
+     */
+    public function enableEncryption()
+    {
+        $this->skipEncryption = false;
+    }
+
+    /**
+     * Used for the encrypt command so that the values in the database can actually be encrypted.
+     */
+    public function enableEncryptionOnTypes()
+    {
+        $this->enableEncryption();
+        foreach (self::ENCRYPT_TYPES as $encyptName => $encryptClass) {
+            if (Type::hasType($encyptName)) {
+                $addedType = Type::getType($encyptName);
+                $addedType->getEncryptService()->enableEncryption();
+            }
+        }
+    }
+
+    /**
      * Process encrypt.
      *
      * @param 'string'|'datetime'|'json'|'array' $type
