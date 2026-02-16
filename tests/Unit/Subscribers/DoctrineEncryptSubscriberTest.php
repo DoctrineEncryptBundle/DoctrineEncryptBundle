@@ -4,11 +4,11 @@ namespace Ambta\DoctrineEncryptBundle\Tests\Unit\Subscribers;
 
 use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
+use Ambta\DoctrineEncryptBundle\Mapping\MappingReader;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Ambta\DoctrineEncryptBundle\Tests\Unit\Subscribers\fixtures\ExtendedUser;
 use Ambta\DoctrineEncryptBundle\Tests\Unit\Subscribers\fixtures\User;
 use Ambta\DoctrineEncryptBundle\Tests\Unit\Subscribers\fixtures\WithUser;
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,26 +22,12 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrineEncryptSubscriberTest extends TestCase
 {
-    /**
-     * @var DoctrineEncryptSubscriber
-     */
-    private $subscriber;
+    private DoctrineEncryptSubscriber $subscriber;
 
-    /**
-     * @var EncryptorInterface|MockObject
-     */
-    private $encryptor;
-
-    /**
-     * @var Reader|MockObject
-     */
-    private $reader;
-
-    /** @var EntityManagerInterface|MockObject */
-    private $em;
-
-    /** @var Connection|MockObject */
-    private $conn;
+    private MockObject&EncryptorInterface $encryptor;
+    private MockObject&MappingReader $reader;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&Connection $conn;
 
     protected function createMock($originalClassName): MockObject
     {
@@ -73,7 +59,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
             })
         ;
 
-        $this->reader = $this->createMock(Reader::class);
+        $this->reader = $this->createMock(MappingReader::class);
         $this->reader->expects($this->any())
             ->method('getPropertyAnnotation')
             ->willReturnCallback(function (\ReflectionProperty $reflProperty, string $class) {
@@ -324,7 +310,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
     public function testAnnotationsAreOnlyReadOnce(): void
     {
-        $reader = $this->createMock(Reader::class);
+        $reader = $this->createMock(MappingReader::class);
         $reader->expects($this->exactly(4)) // 2 properties and test if embedded and encrypted
             ->method('getPropertyAnnotation')
             ->willReturnCallback(function (\ReflectionProperty $reflProperty, string $class) {

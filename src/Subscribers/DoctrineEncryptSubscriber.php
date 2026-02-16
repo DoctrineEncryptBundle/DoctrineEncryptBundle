@@ -4,8 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Subscribers;
 
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException;
-use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
-use Doctrine\Common\Annotations\Reader;
+use Ambta\DoctrineEncryptBundle\Mapping\MappingReader;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
@@ -39,19 +38,8 @@ class DoctrineEncryptSubscriber implements EventSubscriber
      */
     public const ENCRYPTED_ANN_NAME = 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted';
 
-    /**
-     * Encryptor.
-     *
-     * @var EncryptorInterface|null
-     */
-    private $encryptor;
-
-    /**
-     * Annotation reader.
-     *
-     * @var Reader|AttributeReader
-     */
-    private $annReader;
+    private ?EncryptorInterface $encryptor;
+    private readonly MappingReader $mappingReader;
 
     /**
      * Used for restoring the encryptor after changing it.
@@ -69,42 +57,23 @@ class DoctrineEncryptSubscriber implements EventSubscriber
 
     /**
      * Count amount of decrypted values in this service.
-     *
-     * @var int
      */
-    public $decryptCounter = 0;
+    public int $decryptCounter = 0;
 
     /**
      * Count amount of encrypted values in this service.
-     *
-     * @var int
      */
-    public $encryptCounter = 0;
+    public int $encryptCounter = 0;
 
-    /** @var array */
-    private $cachedDecryptions = [];
+    private array $cachedDecryptions                     = [];
+    private array $cachedClassProperties                 = [];
+    private array $cachedClassPropertiesAreEmbedded      = [];
+    private array $cachedClassPropertiesAreEncrypted     = [];
+    private array $cachedClassesContainAnEncryptProperty = [];
 
-    /** @var array */
-    private $cachedClassProperties = [];
-
-    /** @var array */
-    private $cachedClassPropertiesAreEmbedded = [];
-
-    /** @var array */
-    private $cachedClassPropertiesAreEncrypted = [];
-
-    /** @var array */
-    private $cachedClassesContainAnEncryptProperty = [];
-
-    /**
-     * Initialization of subscriber.
-     *
-     * @param Reader|AttributeReader $annReader
-     * @param EncryptorInterface     $encryptor (Optional)  An EncryptorInterface
-     */
-    public function __construct($annReader, EncryptorInterface $encryptor)
+    public function __construct(MappingReader $mappingReader, EncryptorInterface $encryptor)
     {
-        $this->annReader        = $annReader;
+        $this->mappingReader    = $mappingReader;
         $this->encryptor        = $encryptor;
         $this->restoreEncryptor = $this->encryptor;
         $this->pac              = PropertyAccess::createPropertyAccessor();
@@ -385,7 +354,7 @@ class DoctrineEncryptSubscriber implements EventSubscriber
     {
         $key = $refProperty->getDeclaringClass()->getName().$refProperty->getName();
         if (!array_key_exists($key, $this->cachedClassPropertiesAreEmbedded)) {
-            $this->cachedClassPropertiesAreEmbedded[$key] = (bool) $this->annReader->getPropertyAnnotation($refProperty, 'Doctrine\ORM\Mapping\Embedded');
+            $this->cachedClassPropertiesAreEmbedded[$key] = (bool) $this->mappingReader->getPropertyAnnotation($refProperty, 'Doctrine\ORM\Mapping\Embedded');
         }
 
         return $this->cachedClassPropertiesAreEmbedded[$key];
@@ -399,7 +368,7 @@ class DoctrineEncryptSubscriber implements EventSubscriber
         $key = $refProperty->getDeclaringClass()->getName().$refProperty->getName();
         if (!array_key_exists($key, $this->cachedClassPropertiesAreEncrypted)) {
             $type               = null;
-            $propertyAnnotation = $this->annReader->getPropertyAnnotation($refProperty, self::ENCRYPTED_ANN_NAME);
+            $propertyAnnotation = $this->mappingReader->getPropertyAnnotation($refProperty, self::ENCRYPTED_ANN_NAME);
             if ($propertyAnnotation) {
                 $type = $propertyAnnotation->type;
             }

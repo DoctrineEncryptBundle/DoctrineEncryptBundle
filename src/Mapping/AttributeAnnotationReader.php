@@ -12,21 +12,15 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
  *
  * @internal
  */
-final class AttributeAnnotationReader implements Reader
+final class AttributeAnnotationReader implements Reader, MappingReader
 {
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
+    private readonly Reader $annotationReader;
 
-    /**
-     * @var AttributeReader
-     */
-    private $attributeReader;
-
-    public function __construct(AttributeReader $attributeReader, Reader $annotationReader, string $cacheDir)
-    {
-        $this->attributeReader  = $attributeReader;
+    public function __construct(
+        private readonly AttributeReader $attributeReader,
+        Reader $annotationReader,
+        string $cacheDir,
+    ) {
         $annotationsCache       = new FilesystemAdapter('', 0, $cacheDir.'/doctrine_encrypt');
         $this->annotationReader = new PsrCachedReader($annotationReader, $annotationsCache);
     }

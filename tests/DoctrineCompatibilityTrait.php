@@ -214,11 +214,10 @@ trait DoctrineCompatibilityTrait
     {
         if (method_exists($statement, 'executeQuery')) {
             return $statement->executeQuery()->fetchAllAssociative();
-        } else {
-            $statement->execute();
-
-            return $statement->fetchAll();
         }
+        $statement->execute();
+
+        return $statement->fetchAll();
     }
 
     /**
@@ -230,10 +229,9 @@ trait DoctrineCompatibilityTrait
     {
         if (method_exists($statement, 'executeQuery')) {
             return $statement->executeQuery()->fetchAssociative();
-        } else {
-            $statement->execute();
-
-            return $statement->fetch();
         }
+        $statement->execute();
+
+        return $statement->fetch();
     }
 }

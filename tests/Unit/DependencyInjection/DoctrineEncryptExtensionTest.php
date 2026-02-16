@@ -2,14 +2,18 @@
 
 namespace Ambta\DoctrineEncryptBundle\Tests\Unit\DependencyInjection;
 
+use Ambta\DoctrineEncryptBundle\DependencyInjection\ConfigureMappingReaderPass;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
+use Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader;
+use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\HiddenString\HiddenString;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\ExpressionLanguage\Expression;
 
@@ -17,12 +21,8 @@ class DoctrineEncryptExtensionTest extends TestCase
 {
     use ExpectDeprecationTrait;
 
-    /**
-     * @var DoctrineEncryptExtension
-     */
-    private $extension;
-
-    private $temporaryDirectory;
+    private DoctrineEncryptExtension $extension;
+    private string $temporaryDirectory;
 
     protected function setUp(): void
     {
@@ -204,11 +204,52 @@ class DoctrineEncryptExtensionTest extends TestCase
         static::assertEquals($expectedSecret, $actualSecret);
     }
 
+    public function testLoadConfigWithFrameworkAnnotationsDisabled(): void
+    {
+        $container = $this->createContainerWithFrameworkBundle(annotationsEnabled: false);
+        $this->extension->load([], $container);
+
+        // Register services for annotation/attribute reading
+        (new ConfigureMappingReaderPass())->process($container);
+
+        static::assertTrue($container->hasDefinition('ambta_doctrine_attribute_reader'));
+        static::assertSame(AttributeReader::class, $container->getDefinition('ambta_doctrine_attribute_reader')->getClass());
+
+        static::assertTrue($container->hasAlias('ambta_doctrine_annotation_reader'));
+        static::assertSame('ambta_doctrine_attribute_reader', (string) $container->getAlias('ambta_doctrine_annotation_reader'));
+    }
+
+    public function testLoadConfigWithFrameworkAnnotationsEnabled(): void
+    {
+        $container = $this->createContainerWithFrameworkBundle(annotationsEnabled: true);
+        $this->extension->load([], $container);
+
+        // Register services for annotation/attribute reading
+        (new ConfigureMappingReaderPass())->process($container);
+
+        static::assertTrue($container->hasDefinition('ambta_doctrine_attribute_reader'));
+        static::assertSame(AttributeReader::class, $container->getDefinition('ambta_doctrine_attribute_reader')->getClass());
+
+        static::assertTrue($container->hasDefinition('ambta_doctrine_annotation_reader'));
+        static::assertSame(AttributeAnnotationReader::class, $container->getDefinition('ambta_doctrine_annotation_reader')->getClass());
+    }
+
     private function createContainer(): ContainerBuilder
     {
         $container = new ContainerBuilder(
             new ParameterBag(['kernel.debug' => false])
         );
+
+        return $container;
+    }
+
+    private function createContainerWithFrameworkBundle(bool $annotationsEnabled): ContainerBuilder
+    {
+        $container = new ContainerBuilder();
+
+        if ($annotationsEnabled) {
+            $container->setDefinition('annotations.reader', new Definition());
+        }
 
         return $container;
     }

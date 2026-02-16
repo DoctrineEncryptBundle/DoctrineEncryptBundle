@@ -132,7 +132,7 @@ final class DoctrineDecryptDatabaseCommand extends AbstractCommand
                     if (!is_null($value)) {
                         ++$valueCounter;
 
-                        $annotation      = $this->annotationReader->getPropertyAnnotation($property, Encrypted::class);
+                        $annotation      = $this->mappingReader->getPropertyAnnotation($property, Encrypted::class);
                         $newValue        = $this->encryptService->decrypt($annotation->type, $value);
                         $encryptDbalType = Type::getType($annotation->type);
                         $usedValue       = $encryptDbalType->convertToDatabaseValue($newValue, $platform);

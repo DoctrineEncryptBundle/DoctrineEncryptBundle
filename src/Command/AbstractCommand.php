@@ -2,10 +2,10 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
+use Ambta\DoctrineEncryptBundle\Mapping\MappingReader;
 use Ambta\DoctrineEncryptBundle\Service\EncryptService;
 use Ambta\DoctrineEncryptBundle\Service\EncryptServiceAwareInterface;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -19,44 +19,17 @@ use Symfony\Component\Console\Command\Command;
 abstract class AbstractCommand extends Command
 {
     /**
-     * @var EntityManagerInterface|EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var DoctrineEncryptSubscriber
-     */
-    protected $subscriber;
-
-    /**
-     * @var \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader|\Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader
-     */
-    protected $annotationReader;
-
-    /**
-     * @var EncryptServiceAwareInterface
-     */
-    protected $encryptService;
-
-    /**
      * AbstractCommand constructor.
-     *
-     * @param EntityManager                                                                                                       $entityManager
-     * @param \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader|\Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader $annotationReader
      *
      * @return void
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        $annotationReader,
-        DoctrineEncryptSubscriber $subscriber,
-        EncryptServiceAwareInterface $encryptService
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MappingReader $mappingReader,
+        protected readonly DoctrineEncryptSubscriber $subscriber,
+        protected readonly EncryptServiceAwareInterface $encryptService
     ) {
         parent::__construct();
-        $this->entityManager    = $entityManager;
-        $this->annotationReader = $annotationReader;
-        $this->subscriber       = $subscriber;
-        $this->encryptService   = $encryptService;
     }
 
     /**
@@ -148,7 +121,7 @@ abstract class AbstractCommand extends Command
         $properties      = [];
 
         foreach ($propertyArray as $property) {
-            if ($this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted')) {
+            if ($this->mappingReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted')) {
                 $properties[] = $property;
             }
         }

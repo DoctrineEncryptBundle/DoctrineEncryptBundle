@@ -9,7 +9,7 @@ use Ambta\DoctrineEncryptBundle\Configuration\Annotation;
  *
  * @internal
  */
-final class AttributeReader
+final class AttributeReader implements MappingReader
 {
     /** @var array */
     private $isRepeatableAttribute = [];
@@ -23,11 +23,13 @@ final class AttributeReader
     }
 
     /**
-     * @phpstan-param class-string $annotationName
+     * @param class-string<T> $annotationName the name of the annotation
      *
-     * @return Annotation|Annotation[]|null
+     * @return T|null the Annotation or NULL, if the requested annotation does not exist
+     *
+     * @template T
      */
-    public function getClassAnnotation(\ReflectionClass $class, string $annotationName)
+    public function getClassAnnotation(\ReflectionClass $class, $annotationName)
     {
         return $this->getClassAnnotations($class)[$annotationName] ?? null;
     }
@@ -41,11 +43,13 @@ final class AttributeReader
     }
 
     /**
-     * @phpstan-param class-string $annotationName
+     * @param class-string<T> $annotationName the name of the annotation
      *
-     * @return Annotation|Annotation[]|null
+     * @return T|null the Annotation or NULL, if the requested annotation does not exist
+     *
+     * @template T
      */
-    public function getPropertyAnnotation(\ReflectionProperty $property, string $annotationName)
+    public function getPropertyAnnotation(\ReflectionProperty $property, $annotationName)
     {
         return $this->getPropertyAnnotations($property)[$annotationName] ?? null;
     }

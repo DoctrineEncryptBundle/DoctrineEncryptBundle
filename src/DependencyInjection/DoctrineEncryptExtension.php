@@ -62,19 +62,7 @@ class DoctrineEncryptExtension extends Extension
             throw new \RuntimeException('doctrineencryptbundle/doctrine-encrypt-bundle expects symfony-version >= 5.4!');
         }
 
-        // Symfony 5-6
-        if (Kernel::MAJOR_VERSION < 7) {
-            // PHP 8.x (annotations and attributes)
-            // Doctrine 3.0 - no annotations
-            if (\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser(), 'doctrine/orm', '^3.0')) {
-                $loader->load('service_listeners_with_attributes.yml');
-            } else {
-                $loader->load('services_subscriber_with_annotations_and_attributes.yml');
-            }
-        // Symfony 7 (only attributes)
-        } else {
-            $loader->load('service_listeners_with_attributes.yml');
-        }
+        // Actual definition of the services regarding orm-subscriber/listener is now done in the ConfigureMappingReaderPass.
     }
 
     /**

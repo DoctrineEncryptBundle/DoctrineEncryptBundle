@@ -132,7 +132,7 @@ final class DoctrineEncryptDatabaseCommand extends AbstractCommand
                         ++$valueCounter;
 
                         if (substr($value, -strlen(EncryptService::ENCRYPTION_MARKER)) != EncryptService::ENCRYPTION_MARKER) {
-                            $annotation      = $this->annotationReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted');
+                            $annotation      = $this->mappingReader->getPropertyAnnotation($property, 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted');
                             $encryptDbalType = Type::getType($annotation->type);
                             $newValue        = $encryptDbalType->convertToPHPValue($value, $platform);
                             $usedValue       = $this->encryptService->encrypt($annotation->type, $newValue);

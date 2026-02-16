@@ -2,6 +2,8 @@
     "symbol-whitelist" : [
         "Defuse\\Crypto\\Crypto",
         "Doctrine\\ORM\\Mapping\\ClassMetadataInfo",
+        "Doctrine\\Common\\Annotations\\PsrCachedReader",
+        "Doctrine\\Common\\Annotations\\Reader",
         "ParagonIE\\HiddenString\\HiddenString",
         "Symfony\\Contracts\\Service\\Attribute\\Required"
     ]
