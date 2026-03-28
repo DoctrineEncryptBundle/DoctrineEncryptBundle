@@ -89,7 +89,6 @@ trait DoctrineCompatibilityTrait
             }
             $addedType = Type::getType($encyptName);
             $addedType->setEncryptService($this->encryptService);
-            $addedType->setEntityManager($this->entityManager);
         }
 
         $schemaTool = new SchemaTool($this->entityManager);
@@ -153,7 +152,6 @@ trait DoctrineCompatibilityTrait
             }
             $addedType = Type::getType($encyptName);
             $addedType->setEncryptService($this->encryptService);
-            $addedType->setEntityManager($this->entityManager);
         }
 
         $schemaTool = new SchemaTool($this->entityManager);

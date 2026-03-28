@@ -13,12 +13,12 @@ parameters:
 		-
 			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEncryptService\\(\\)\\.$#"
 			count: 1
-			path: src/AmbtaDoctrineEncryptBundle.php
+			path: src/Middleware/DoctrineConnectionTypeRegisterDriver.php
 
 		-
-			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEntityManager\\(\\)\\.$#"
+			message: "#^Method Doctrine\\\\DBAL\\\\Driver\\\\Middleware\\\\AbstractDriverMiddleware\\:\\:getDatabasePlatform\\(\\) invoked with 0 parameters, 1 required\\.$#"
 			count: 1
-			path: src/AmbtaDoctrineEncryptBundle.php
+			path: src/Middleware/DoctrineConnectionTypeRegisterDriver.php
 
 		-
 			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:getEncryptService\\(\\)\\.$#"
@@ -67,8 +67,4 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEncryptService\\(\\)\\.$#"
-			path: tests/DoctrineCompatibilityTrait.php
-
-		-
-			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEntityManager\\(\\)\\.$#"
 			path: tests/DoctrineCompatibilityTrait.php
