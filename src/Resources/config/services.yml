@@ -10,6 +10,11 @@ services:
 
     Ambta\DoctrineEncryptBundle\Service\EncryptServiceAwareInterface: '@ambta_doctrine_encrypt.encrypt_service'
 
+    Ambta\DoctrineEncryptBundle\Middleware\DoctrineConnectionTypeRegisterMiddleware:
+        tags: ['doctrine.middleware']
+        arguments:
+            - "@ambta_doctrine_encrypt.encrypt_service"
+
     ambta_doctrine_encrypt.command.decrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
         tags: ['console.command']

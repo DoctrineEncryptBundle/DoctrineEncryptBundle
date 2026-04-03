@@ -6,7 +6,7 @@
 name: CI
 on:
   push:
-    branches: ['main','master','5.4','6.0']
+    branches: ['main','master','6.0','7.0']
   pull_request:
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
         run:  "vendor/bin/phpstan analyze"
 
       - name: "PHPCompatibility"
-        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 8.1-8.4"
+        run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 8.1-8.5"
 
       - name: PHP-CS-Fixer
         uses: docker://ghcr.io/php-cs-fixer/php-cs-fixer:3.64-php8.3
@@ -88,10 +88,6 @@ jobs:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
           extensions: pdo, pdo_sqlite
-
-#      - name: Install Global Dependencies
-#        run: |
-#          composer global require --no-progress --no-scripts --no-plugins symfony/flex >=1.x
 
       - name: "Composer install"
         uses: "ramsey/composer-install@v3"
@@ -147,11 +143,9 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "--prefer-dist --no-progress"
           working-directory: "demo/symfony7.x"
-        if: ${{ startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') || startsWith(matrix.php-version , '8.5') }}
 
       - name: Demo symfony7.x - Unit Tests
         run: demo/symfony7.x/vendor/bin/simple-phpunit -c demo/symfony7.x/phpunit.xml.dist
-        if: ${{ startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') || startsWith(matrix.php-version , '8.5') }}
 
       - name: Demo symfony7.x-types - Install  dependencies
         uses: "ramsey/composer-install@v3"
@@ -159,11 +153,9 @@ jobs:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "--prefer-dist --no-progress"
           working-directory: "demo/symfony7.x-types"
-        if: ${{ startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') || startsWith(matrix.php-version , '8.5') }}
 
       - name: Demo symfony7.x-types - Unit Tests
         run: demo/symfony7.x-types/vendor/bin/simple-phpunit -c demo/symfony7.x-types/phpunit.xml.dist
-        if: ${{ startsWith(matrix.php-version , '8.2') || startsWith(matrix.php-version , '8.3') || startsWith(matrix.php-version , '8.4') || startsWith(matrix.php-version , '8.5') }}
 
       - name: Demo symfony8.x - Install  dependencies
         uses: "ramsey/composer-install@v3"
